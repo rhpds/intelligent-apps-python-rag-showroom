@@ -30,9 +30,19 @@ jobs:
         with:
           node-version: 20.13.1
       - name: install antora
-        run: npm install --global @antora/cli@3.1 @antora/site-generator@3.1
+        run: npm install --global @antora/cli@3.1 @antora/site-generator@3.1 @sntke/antora-mermaid-extension
+      # - name: install mermaid extension
+      #   run: npm install --global @sntke/antora-mermaid-extension
+      - name: install js-yaml for config modification
+        run: npm install js-yaml
+      - name: disable ai-assistant extensions
+        run: node .github/scripts/disable-extensions.js
+      - name: verify extensions disabled
+        run: |
+          echo "Extensions disabled for GitHub Pages build:"
+          cat default-site.yml | grep -A 3 "ai-assistant-build\|rag-export"
       - name: antora generate
-        run: antora generate site.yml --stacktrace
+        run: antora generate default-site.yml --stacktrace
       - name: upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
