@@ -1,43 +1,48 @@
-= {lab_name}
+= Building an Enterprise RAG System with OpenShift AI
+include::_attributes.adoc[]
 
-The `lab_name` var, known as an asciidoc attribute, above was set in `./content/antora.yml` and can be used to set the lab_name or title of your content.
-You are both free to change its value and if you prefer to use a different var name, you can change the value of `lab_name`, for example to `title` in `./content/antora.yml` and then reference it in your content as `\{title}`. +
+== Workshop Overview
 
-image::rhel-logo-black.jpg[rhel-logo-black,55%,55%]
+Welcome to the {company-name} RAG Workshop! This {ic-lab} will illustrate how to combine event-driven serverless applications, data science pipelines, and a vector database to solve a real-world enterprise challenge using https://www.redhat.com/en/topics/ai/what-are-large-language-models[Large Language Models (LLMs)^].
 
-== Variables
+The scenario for this lab is that we all work for "{company-name}", a large company looking to leverage AI to improve its IT support operations. Our goal is to build a prototype https://www.redhat.com/en/topics/ai/what-is-retrieval-augmented-generation[Retrieval-Augmented Generation (RAG)^] system that taps into the vast knowledge base of closed ServiceNow tickets, making it instantly searchable for support engineers through a conversational AI assistant.
 
-Other vars can also be set there, such as `ssh_user` and `ssh_password`, and referenced inline in the lab content by using the `\{foo}` syntax.
+== Disclaimer
 
-This is another var, or asciidoc attribute, from `./content/antora.yml` {my_var}
+This {ic-lab} is an example of what a customer could build using {rhoai}. {rhoai} itself does not include a ServiceNow integration or a vector database out-of-the-box.
 
-== Writing your lab
+This {ic-lab} makes use of a Large Language Model (LLM), the https://github.com/DS4SD/docling[`docling`^] document parsing library, and the https://milvus.io/[Milvus^] vector database. These models and third-party tools are not included in the {rhoai} product. They are provided as a convenience for this {ic-lab}.
 
-Whatever type of content you are writing we'll refer to your *content* as "your lab" in this document.
+NOTE: The quality of the models and the architecture are suitable for a prototype. Choosing the right components for a production environment is a complex task that requires significant experimentation and tuning. This {ic-lab} does not cover production-level architecture design.
 
-=== Lab structure
+== Timetable
 
-Wether you are writing a lab
+This is a tentative timetable for the materials that will be presented.
 
-* First, we will build a monolithic application already compiled as RPM packages and put it into a container. This will allow us to deploy the application, copy it between machines, and update it separately from the operating system. This process affords us a portable and easily maintained component instead of tightly coupling the application with your operating system maintenance.
+[width="90%",cols="3,^2,^2,10",options="header"]
+|=========================================================
+| Name |Duration |Type |Description
 
-* In closing we will build a second container on a different operating system version that makes an application not packaged into RPMs. This will be similar to a web application deployment, positioning the correct files at the right locations. To do this, we will pull a project from GitHub and position the component files within our container image. The purpose of this is to achieve a portable application container that can deploy on several different versions of Red Hat Enterprise Linux. This also provides the benefit of decoupling your application maintenance, which would all happen by building new containers versus operating system maintenance. The container is no longer reliant on the operating system installed on the machine where the application is deployed.
+|The Parasol Company Scenario |15 | Presentation
+a|- We discuss the benefits of using https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai[OpenShift AI^], https://www.kubeflow.org/docs/components/pipelines/introduction/[Data Science Pipelines^], and https://milvus.io/[Milvus^] for this solution.
 
-. Now let's examine this cluster a bit more by describing the cluster (the `$GUID` environment variable is already set for you so you can immediately describe your individual cluster):
-+
-[source,sh,role=execute]
-----
-podman ps
-----
-+
-.Sample Output
-[source,texinfo,subs="attributes"]
-----
-CONTAINER ID  IMAGE                        COMMAND           CREATED      STATUS      PORTS                 NAMES
-2dcfee9e50c4  docker.io/library/httpd:2.4  httpd-foreground  3 hours ago  Up 3 hours  0.0.0.0:8080->80/tcp  showroom-httpd
-----
+|Demo: Event-Driven PDF Pipeline |20 | Demo
+a|- The instructor will demonstrate a real-time data ingestion pipeline.
+- An upload of a PDF to an S3 bucket will automatically trigger a https://www.kubeflow.org/docs/components/pipelines/introduction/[Kubeflow Pipeline^] via https://knative.dev/docs/eventing/[Knative Eventing^] and https://kafka.apache.org/[Kafka^].
+- This showcases the event-driven capabilities of the platform.
 
-=== Lab Access
+|Lab: Building the API-to-RAG Pipeline |45 | Hands-On
+a|- *Lab Setup:* Attendees log in and explore their pre-created OpenShift AI project.
+- *Deploy & Verify Mock API:* Attendees deploy a mock ServiceNow API using ArgoCD and test its endpoint.
+- *Run KFP Pipeline:* Attendees import and run a Kubeflow Pipeline that fetches data from the API, generates embeddings, and populates the Milvus vector database.
+- *Query the RAG System:* Attendees use a Jupyter Notebook to ask questions against the system and see the contextually relevant answers retrieved from Milvus.
 
-The terminal window to your right is *already* logged into the lab environment as the `{ssh_user}` user via `ssh`.
-All steps of this lab are to be completed as the `{ssh_user}` user.
+|=========================================================
+
+== Resources
+
+* https://red.ht/intelligent-apps[Presentation Slides: Intelligent Applications^]
+
+== Contributing
+
+If you are interested in contributing to this project, consult this GitHub Repo: https://github.com/cnuland/hello-chris-rag-pipeline[https://github.com/cnuland/hello-chris-rag-pipeline,window=_blank]

@@ -1,7 +1,24 @@
-* xref:module-01.adoc[1. RPM Native Container]
-** xref:module-01.adoc#repositories[Repositories]
-** xref:module-01.adoc#software[Software]
+* 1. The Parasol Company Scenario
+** xref:01-introduction.adoc[1.1 Introduction]
+** xref:01-problem-statement.adoc[1.2 The Knowledge Gap]
+** xref:01-solution-overview.adoc[1.3 Proposed RAG Architecture]
 
-* xref:module-02.adoc[2. GitHub Sourced Container]
-** xref:module-02.adoc#prerequisites[Install Prerequisites]
-** xref:module-02.adoc#container[Enable Container]
+* 2. Demo: Event-Driven PDF Ingestion (Instructor-Led)
+** xref:02-demo-event-driven-pipeline.adoc[2.1 Real-time PDF Processing]
+
+* 3. Lab: Building the API-to-RAG Pipeline (Hands-On)
+** xref:03-01-lab-overview.adoc[3.1 Lab Overview & Setup]
+** xref:03-02-deploying-mock-api.adoc[3.2 Deploying the Mock ServiceNow API]
+** xref:03-03-verifying-mock-api.adoc[3.3 Verifying the Mock API]
+** xref:03-04-deploying-milvus.adoc[3.4 Deploying the RAG Vector Database (Milvus)]
+** xref:03-05-importing-the-pipeline.adoc[3.4 Importing the Data Science Pipeline]
+** xref:03-06-creating-a-pipeline-run.adoc[3.5 Creating and Configuring a Pipeline Run]
+** xref:03-07-monitoring-the-run.adoc[3.6 Monitoring the Pipeline Run]
+** xref:03-08-querying-milvus.adoc[3.7 Querying the RAG System]
+
+* 4. What's Next?
+** xref:04-whats-next-instructlab.adoc[4.1 Advanced RAG with InstructLab]
+
+* 5. End of Workshop
+** xref:05-end-of-lab.adoc[5.1 Conclusion & Thank You]
+

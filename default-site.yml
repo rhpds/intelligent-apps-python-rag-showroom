@@ -1,7 +1,7 @@
 ---
 site:
-  title: Showroom Template Demo
-  url: https://github.com/rhpds/showroom_template_nookbag
+  title: Building Intelligent Applications with Python and RAG Lab
+  url: https://github.com/rhpds/showroom-intelligent-apps-rag
   start_page: modules::index.adoc
 
 content:
