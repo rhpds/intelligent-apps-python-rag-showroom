@@ -35,10 +35,10 @@ jobs:
         run: npm install js-yaml
     #   - name: disable ai-assistant extensions
     #   run: node .github/scripts/disable-extensions.js
-      - name: verify extensions disabled
-        run: |
-          echo "Extensions disabled for GitHub Pages build:"
-          cat default-site.yml | grep -A 3 "ai-assistant-build\|rag-export"
+    #  - name: verify extensions disabled
+    #    run: |
+    #      echo "Extensions disabled for GitHub Pages build:"
+    #      cat default-site.yml | grep -A 3 "ai-assistant-build\|rag-export"
       - name: antora generate
         run: antora generate default-site.yml --stacktrace
       - name: upload pages artifact
