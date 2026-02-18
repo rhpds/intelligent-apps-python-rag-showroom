@@ -9,13 +9,10 @@ persist_url_state: true
 tabs:
   # RHOAI Console
   - name: OpenShift AI Console
-    url: 'https://console-openshift-console.${DOMAIN}'
-
+    url: 'https://data-science-gateway.${DOMAIN}'
   # OCP Console
   - name: OpenShift Console
-    url: 'https://data-science-gateway.${DOMAIN}'
-
-
+    url: 'https://console-openshift-console.${DOMAIN}'
   # Single terminal
   - name: Terminal
     path: /terminal/
