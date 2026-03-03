@@ -88,19 +88,27 @@ hello-chris-rag-pipeline/lab-content/3.1
 
 4.  Open the notebook named `03-01-nb-llm-example.ipynb`. This notebook contains pre-written Python code to connect to and query the LLM.
 
-5.  *Execute the cells* in the notebook one by one. The key cells perform the following actions:
-    * *Connect to the LLM:* This cell defines the connection to the internal service for the *Granite-3.1-8B-Instruct* model that is running in the cluster.
+5.  Copy your API token into the `openai_api_key` variable, replace the `EMPTY` string:
+
+[.console-input]
+[source,text]
+----
+{litellm_virtual_key}
+----
+
+6.  *Execute the cells* in the notebook one by one. The key cells perform the following actions:
+    * *Connect to the LLM:* This cell defines the connection to the internal service for the *granite-4.0-h-tiny* model that is running in the cluster.
 
 [source,python]
 ----
 # LLM Inference Server URL
-inference_server_url = "http://granite-3-1-8b-instruct-predictor.shared-llm.svc.cluster.local:8080"
+inference_server_url = "https://litellm-prod.apps.maas.redhatworkshops.io"
 
 # LLM definition using a client that speaks the OpenAI API format
 llm = VLLMOpenAI(
-    openai_api_key="EMPTY",
+    openai_api_key="sk-...",
     openai_api_base=f"{inference_server_url}/v1",
-    model_name="granite-3-1-8b-instruct",
+    model_name="granite-4.0-h-tiny",
     # ... other parameters
 )
 ----
