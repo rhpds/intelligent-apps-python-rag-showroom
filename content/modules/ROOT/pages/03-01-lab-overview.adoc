@@ -91,7 +91,7 @@ hello-chris-rag-pipeline/lab-content/3.1
 5.  Copy your API token into the `openai_api_key` variable, replace the `EMPTY` string:
 
 [.console-input]
-[source,text]
+[source,text,role="copypaste",subs=attributes+]
 ----
 {litellm_virtual_key}
 ----
