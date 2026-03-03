@@ -99,14 +99,14 @@ hello-chris-rag-pipeline/lab-content/3.1
 6.  *Execute the cells* in the notebook one by one. The key cells perform the following actions:
     * *Connect to the LLM:* This cell defines the connection to the internal service for the *granite-4.0-h-tiny* model that is running in the cluster.
 
-[source,python]
+[source,python,subs=attributes+]
 ----
 # LLM Inference Server URL
 inference_server_url = "https://litellm-prod.apps.maas.redhatworkshops.io"
 
 # LLM definition using a client that speaks the OpenAI API format
 llm = VLLMOpenAI(
-    openai_api_key="sk-...",
+    openai_api_key="{litellm_virtual_key}",
     openai_api_base=f"{inference_server_url}/v1",
     model_name="granite-4.0-h-tiny",
     # ... other parameters
