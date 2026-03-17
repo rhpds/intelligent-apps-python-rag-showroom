@@ -7,6 +7,21 @@ Welcome to the {company-name} RAG Workshop! This {ic-lab} will illustrate how to
 
 The scenario for this lab is that we all work for "{company-name}", a large company looking to leverage AI to improve its IT support operations. Our goal is to build a prototype https://www.redhat.com/en/topics/ai/what-is-retrieval-augmented-generation[Retrieval-Augmented Generation (RAG)^] system that taps into the vast knowledge base of closed ServiceNow tickets, making it instantly searchable for support engineers through a conversational AI assistant.
 
+== AI Lab Assistant
+
+image::ai-assistant-icon.png[AI Lab Assistant]
+
+Throughout this workshop, you have access to an AI-powered lab assistant that can help you navigate the material, answer questions, and troubleshoot issues. The assistant is integrated directly into the documentation and has knowledge of the workshop content, OpenShift operations, and the technologies covered in this lab.
+
+The AI assistant can help you to:
+
+* *Ask questions about the technology* - Learn more about RAG, vector databases, data science pipelines, or any other technology covered in the workshop
+* *Get troubleshooting advice* - When things go wrong, describe what you're experiencing. Be specific: "In exercise 3, I deployed the ServiceNow app but I'm getting a 404 error when trying to access it" or "What is wrong with my milvus deployment in my project?"
+* *Clarify workshop instructions* - If any step in the workshop is unclear, ask for clarification or additional context
+* *Understand OpenShift resources* - Get help with pods, deployments, services, routes, and other Kubernetes/OpenShift concepts
+
+To get the best results, be explicit and specific in your questions. Include details about which exercise you're working on, what you've tried, and what error messages or unexpected behavior you're seeing.
+
 == Disclaimer
 
 This {ic-lab} is an example of what a developer could build using {rhoai}. {rhoai} itself does not include a ServiceNow integration or a vector database out-of-the-box.
