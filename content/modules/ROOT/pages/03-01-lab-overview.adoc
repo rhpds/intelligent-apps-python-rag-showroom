@@ -21,12 +21,12 @@ If you are viewing these instructions in the deployed lab environment, the value
 |===
 |Account ID |`{user}`
 |Password |`{password}`
-|{rhoai} Dashboard |https://rhods-dashboard-redhat-ods-applications.{openshift_cluster_ingress_domain}/[Dashboard^]
+|{rhoai} Dashboard |https://data-science-gateway.{openshift_cluster_ingress_domain}/[Dashboard^]
 |===
 
 === Login Procedure
 
-. Click the *Login with OpenShift* button at the https://rhods-dashboard-redhat-ods-applications.{openshift_cluster_ingress_domain}/[OpenShift AI Dashboard^].
+. Click the *Login with OpenShift* button at the https://data-science-gateway.{openshift_cluster_ingress_domain}/[OpenShift AI Dashboard^].
 +
 [.bordershadow]
 image::03/login-with-openshift.png[The main login screen for Red Hat OpenShift AI]
@@ -90,7 +90,7 @@ Before we build our RAG pipeline, let's connect to the local LLM that has been d
 
 [IMPORTANT]
 ====
-The LLM service (`granite-3-1-8b-instruct`) is already running in the cluster and accessible via internal Kubernetes networking. This keeps all AI interactions within our environment, free from rate limiting and without need of internet connectivity for LLM inference.
+The LLM service (`granite-4-0-h-tiny`) is already running in the another OpenShift AI cluster (MaaS) and accessible via API and API token.
 ====
 
 . Return to the OpenShift AI Dashboard browser tab and navigate to the *Workbenches* tab within your project. Launch the workbench (`my-workbench`) by clicking on its name.
