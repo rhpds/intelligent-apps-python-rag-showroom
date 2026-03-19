@@ -31,7 +31,7 @@ Let's trace the event through each step of this process.
 The entire process begins by uploading a file to an S3 bucket. The system supports two types of buckets:
 
 * **`pdf-inbox`** — the shared demo bucket (routes to the default KFP endpoint)
-* **`{username}-pdf-inbox`** — per-user buckets (e.g., `user1-pdf-inbox`, `user2-pdf-inbox`) that automatically route to each user's own DSPA
+* **`{user}-pdf-inbox`** — per-user buckets (e.g., `user1-pdf-inbox`, `user2-pdf-inbox`) that automatically route to each user's own DSPA
 
 Try uploading to your per-user bucket (e.g., `{user}-pdf-inbox`) or the shared `pdf-inbox` bucket:
 
