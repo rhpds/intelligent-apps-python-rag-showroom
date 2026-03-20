@@ -67,5 +67,4 @@ image::03/import-pipeline-finish.png[The 'Import pipeline' button in the Pipelin
 
 [.bordershadow]
 image::03/pipeline-details-view.png[The pipeline details view showing the graph of the imported 'ServiceNow Ticket Ingestion' pipeline.]
-
 With the pipeline successfully imported, we are now ready to create a run and process the data.

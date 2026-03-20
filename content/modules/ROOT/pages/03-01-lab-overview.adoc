@@ -19,9 +19,8 @@ If you are viewing these instructions in the deployed lab environment, the value
 .Lab Environment Access
 [cols="1,2"]
 |===
-|Account ID |`{user}`
+|Username |`{user}`
 |Password |`{password}`
-|{rhoai} Dashboard |https://data-science-gateway.{openshift_cluster_ingress_domain}/[Dashboard^]
 |===
 
 === Login Procedure
