@@ -31,28 +31,9 @@ The entire process begins by uploading a file to an S3 bucket. The system suppor
 
 Try uploading to your per-user bucket (`{user}-pdf-inbox`):
 
-. First, switch to the {ocp} Console. On the right-hand side of this workshop guide, select the *OpenShift Console* tab at the top.
+. Open the MinIO console by clicking the link below:
 +
-[NOTE]
-====
-The console may prompt you to sign in again. Use the same username and password as in the *Lab Environment Access* table from the previous section.
-====
-
-. In the {ocp} Console, switch to the *minio* project and navigate to *Networking* -> *Routes*. Click the `minio-console` route URL under *Location*.
-+
-[.bordershadow]
-image::02/minio-access-web.png[The OpenShift Console Routes page showing the minio-console route and its URL]
-+
-Alternatively, you can find the route from the *Terminal* tab:
-+
-[.console-input]
-[source,bash,role="copypaste"]
-----
-oc get route minio-console -n minio -o jsonpath='{.spec.host}{"\n"}'
-----
-+
-[.bordershadow]
-image::02/minio-access-terminal.png[Getting the MinIO console URL from the Terminal]
+https://minio-console-minio.{openshift_cluster_ingress_domain}/[MinIO Console^]
 
 . Log in to the MinIO console using the following credentials:
 +
@@ -93,33 +74,19 @@ As soon as the upload is complete, the MinIO server fires an event. The bucket n
 
 The `minio-event-bridge` service receives the webhook from MinIO and immediately publishes a CloudEvent message to our Kafka broker. The event includes the bucket name as a CloudEvent extension attribute (`bucketname`), which is critical for multi-user routing downstream.
 
-You can view the event bridge logs to see events flowing through. Switch to the *Terminal* tab and run:
-
-[.console-input]
-[source,bash,role="copypaste"]
-----
-oc logs -n rag-pipeline-workshop -l app=minio-event-bridge --tail=20
-----
-
-You will see log entries showing the CloudEvent being received from MinIO and forwarded to the Kafka broker, confirming the event pipeline is active.
+Behind the scenes, the event bridge logs show the CloudEvent being received and forwarded:
 
 [.bordershadow]
 image::02/step-2-logs.png[Log output from the minio-event-bridge showing CloudEvents being forwarded to Kafka]
 
 == Step 3: From Kafka to Knative
 
-Now, we will see how Knative Eventing picks up the event and delivers it to the trigger service.
+Now, let's see how Knative Eventing picks up the event and delivers it to the trigger service.
 
-. *Knative Broker & Trigger:* The Kafka Broker receives the CloudEvent (including the `bucketname` extension) and delivers it to any matching subscribers. Our `kfp-s3-trigger` service is subscribed via a Trigger. You can verify the Trigger is ready and pointing to the correct service:
-+
-[.console-input]
-[source,bash,role="copypaste"]
-----
-oc get trigger minio-pdf-event-trigger -n rag-pipeline-workshop
-----
-+
-The output should show the Trigger with `READY = True`, subscribed to the `kafka-broker` with its subscriber destination set to the `kfp-s3-trigger` Knative Service.
-+
+The Kafka Broker receives the CloudEvent (including the `bucketname` extension) and delivers it to any matching subscribers. Our `kfp-s3-trigger` service is subscribed via a Knative Trigger that filters for MinIO upload events.
+
+The Trigger is pre-configured and ready, as shown below:
+
 [.bordershadow]
 image::02/step-3-logs.png[Output of the oc get trigger command showing READY status]
 
@@ -135,24 +102,16 @@ This is where the *multi-user routing* happens. The `kfp-s3-trigger` service:
 * Your bucket `{user}-pdf-inbox` -> `ds-pipeline-dspa.{user}.svc.cluster.local:8443`
 * Shared bucket `pdf-inbox` -> the default `KFP_ENDPOINT` (fallback)
 
-View the logs of this pod in the *Terminal* tab:
-
-[.console-input]
-[source,bash,role="copypaste"]
-----
-oc logs -n rag-pipeline-workshop -l serving.knative.dev/service=kfp-s3-trigger -c user-container --tail=30
-----
-
-You will see log entries confirming:
-
-* A POST request was received with the CloudEvent payload.
-* The bucket name and object key were extracted from the event.
-* The correct KFP endpoint was resolved (e.g., "Bucket '{user}-pdf-inbox' -> user '{user}' -> KFP endpoint: ...").
-* The KFP client was initialized for the resolved endpoint.
-* The pipeline was found and a run was started with the S3 object key as a parameter.
+The trigger service logs show the multi-user routing in action — extracting the bucket name, resolving the DSPA endpoint, and starting the pipeline run:
 
 [.bordershadow]
 image::02/step-4-logs.png[Log output from the kfp-s3-trigger pod showing multi-user routing and pipeline run creation]
+
+In the screenshot above, you can see:
+
+* The bucket name and object key extracted from the CloudEvent
+* The correct KFP endpoint resolved based on the bucket name (e.g., `{user}-pdf-inbox` -> `ds-pipeline-dspa.{user}.svc.cluster.local:8443`)
+* A pipeline run successfully started with the S3 object key as a parameter
 
 == Step 5: The Kubeflow Pipeline Run
 
