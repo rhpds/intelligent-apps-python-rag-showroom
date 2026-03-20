@@ -3,7 +3,7 @@
 ** xref:01-problem-statement.adoc[1.2 The Knowledge Gap]
 ** xref:01-solution-overview.adoc[1.3 Proposed RAG Architecture]
 
-* 2. Demo: Event-Driven PDF Ingestion (Instructor-Led)
+* 2. Event-Driven PDF Ingestion
 ** xref:02-demo-event-driven-pipeline.adoc[2.1 Real-time PDF Processing]
 
 * 3. Lab: Building the API-to-RAG Pipeline (Hands-On)

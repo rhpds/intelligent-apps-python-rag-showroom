@@ -41,8 +41,8 @@ This is a tentative timetable for the materials that will be presented.
 |The Parasol Company Scenario |15 | Presentation
 a|- We discuss the benefits of using https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai[OpenShift AI^], https://www.kubeflow.org/docs/components/pipelines/introduction/[Data Science Pipelines^], and https://milvus.io/[Milvus^] for this solution.
 
-|Demo: Event-Driven PDF Pipeline |20 | Demo
-a|- The instructor will demonstrate a real-time data ingestion pipeline.
+|Event-Driven PDF Pipeline |20 | Guided Walkthrough
+a|- You will explore a real-time data ingestion pipeline.
 - An upload of a PDF to an S3 bucket will automatically trigger a https://www.kubeflow.org/docs/components/pipelines/introduction/[Kubeflow Pipeline^] via https://knative.dev/docs/eventing/[Knative Eventing^] and https://kafka.apache.org/[Kafka^].
 - This showcases the event-driven capabilities of the platform.
 
