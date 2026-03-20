@@ -4,7 +4,7 @@ name: Build Vector Embeddings
 on:
   push:
     branches:
-      - ai_assistant
+      - main
     paths:
       - 'content/**'
       - 'backend/rag_init.py'
