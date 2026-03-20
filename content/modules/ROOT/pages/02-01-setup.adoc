@@ -1,0 +1,137 @@
+= 2.1 Setup & Pipeline Import
+include::_attributes.adoc[]
+
+In this section, you will connect to the workshop environment and import the PDF processing pipeline that powers the event-driven demo. This is a one-time setup before you can trigger the automated workflow.
+
+== Getting Connected
+
+For this walkthrough, you will need access to both the {rhoai} Dashboard and the {ocp} Console. Each attendee has a unique user account.
+
+=== Environment Information
+
+[IMPORTANT]
+====
+If you are viewing these instructions in the deployed lab environment, the values below will be correctly rendered for you. If viewing from a static source like GitHub, placeholder values will appear.
+====
+
+.Lab Environment Access
+[cols="1,2"]
+|===
+|Username |`{user}`
+|Password |`{password}`
+|===
+
+=== Login Procedure
+
+. Click the *Login with OpenShift* button at the https://data-science-gateway.{openshift_cluster_ingress_domain}/[OpenShift AI Dashboard^].
++
+[.bordershadow]
+image::03/login-with-openshift.png[The main login screen for Red Hat OpenShift AI]
+
+. Enter your user credentials (`{user}` and `{password}`) provided above.
++
+[NOTE]
+====
+Your browser might display a security warning. It is safe to ignore this message for the lab environment.
+====
+
+. After you authenticate, you will land on the {rhoai} dashboard.
++
+[.bordershadow]
+image::03/rhoai-dashboard-main.png[The main dashboard of Red Hat OpenShift AI after logging in]
+
+Congratulations, you are now connected!
+
+== Accessing the Terminal
+
+This workshop provides a standalone *Terminal* for running `oc` commands against the cluster. You can access it from the tabs on the right-hand side of this workshop guide.
+
+. Select the *Terminal* tab at the top of the right-hand panel.
++
+[.bordershadow]
+image::02/terminal-access.png[The standalone Terminal tab in the workshop guide]
+
+. Log in to the {ocp} cluster with your provided credentials:
++
+[.console-input]
+[source,bash,role="copypaste",subs=attributes+]
+----
+{login_command}
+----
++
+When prompted, answer `y` to accept the insecure connection:
++
+[.console-output]
+[source,text]
+----
+The server uses a certificate signed by an unknown authority.
+You can bypass the certificate check, but any data you send to the server could be intercepted by others.
+Use insecure connections? (y/n): y
+
+WARNING: Using insecure TLS client config. Setting this option is not supported!
+
+Login successful.
+
+You have one project on this server: "user1"
+
+Using project "user1".
+Welcome! See 'oc help' to get started.
+----
++
+You should see your project `{user}` which has been pre-created for you.
+
+== Import the PDF Processing Pipeline
+
+Before you can trigger a pipeline run, you need to import the PDF processing pipeline into your Data Science Project. This is a one-time setup step.
+
+=== Download the Pipeline File from Your Workbench
+
+. In the {rhoai} Dashboard, navigate to your project and launch your *Workbench* (named "My Workbench").
++
+[.bordershadow]
+image::03/launch-workbench.png[Launching the Jupyter Workbench from the OpenShift AI dashboard]
+
+. Once JupyterLab opens, use the file browser on the left to navigate to:
++
+[.console-input]
+[source,text]
+----
+hello-chris-rag-pipeline/lab-content/2.1/
+----
+
+image::02/pipeline-download.png[The main dashboard of Red Hat OpenShift AI after logging in]
+
+. Inside this directory, you will find the file `simple-pdf-processing-pipeline.yaml`. *Right-click* on the file and select *Download* from the context menu. This will save the file to your local computer.
+
+. You can now close the JupyterLab browser tab.
+
+=== Upload the Pipeline to OpenShift AI
+
+. In the {rhoai} Dashboard, navigate to the *Pipelines* section within your Data Science Project.
+
+. Click the *Import pipeline* button.
+
+image::02/pipeline-import.png[The main dashboard of Red Hat OpenShift AI after logging in]
+
+. Give your pipeline this exact name:
++
+[.console-input]
+[source,text]
+----
+simple-pdf-processing-pipeline
+----
++
+[IMPORTANT]
+====
+The name must match exactly. The event-driven trigger service looks up the pipeline by this display name.
+====
+
+image::02/pipeline-name.png[The main dashboard of Red Hat OpenShift AI after logging in]
+
+. Click the *Upload* box and select the `simple-pdf-processing-pipeline.yaml` file that you just downloaded.
+
+image::02/pipeline-upload.png[The main dashboard of Red Hat OpenShift AI after logging in]
+
+. Click *Import pipeline* to finish.
+
+Once imported, you are ready to trigger the event-driven flow in the next section.

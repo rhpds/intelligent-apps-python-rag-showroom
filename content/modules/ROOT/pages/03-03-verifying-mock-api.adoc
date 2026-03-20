@@ -2,30 +2,49 @@
 include::_attributes.adoc[]
 
 With the mock API deployed, you will now send HTTP requests to two of its endpoints to confirm the service is reachable and returning data correctly.
-You will use the *OpenShift Web Terminal* — a browser-based shell that is already authenticated to your cluster and scoped to your project namespace — with no local tooling required.
+You will use the standalone *Terminal* provided in this workshop — accessible from the tabs on the right-hand side of this guide.
 
 [NOTE]
 ====
 The mock API is exposed *internally* within the cluster via a Kubernetes `Service` named `mock-servicenow-api-svc` on port `8080`.
-It is not reachable from outside the cluster; the Web Terminal provides an in-cluster shell from which the service DNS name resolves correctly.
+It is not reachable from outside the cluster; the Terminal provides an in-cluster shell from which the service DNS name resolves correctly.
 ====
 
-== Accessing the OpenShift Web Terminal
+== Accessing the Terminal
 
-. Click the *terminal* icon (*>_*) in the top-right corner of the OpenShift web console toolbar.
-An *OpenShift command line terminal* panel opens at the bottom of the page, showing an *Initialize terminal* dialog.
-
-. In the *Project* dropdown, confirm your project (`{user}`) is selected.
-
-. Click *Start*.
+. Select the *Terminal* tab at the top of the right-hand panel of this workshop guide.
 +
 [.bordershadow]
-image::03/openshift-web-terminal-init.png[The OpenShift Web Terminal initialization panel showing the project selector set to user1 and the Start button]
+image::02/terminal-access.png[The standalone Terminal tab in the workshop guide]
+
+. If you have not already logged in during a previous section, log in to the {ocp} cluster with your provided credentials:
 +
-The terminal initializes and provides a shell session already authenticated to your cluster and scoped to your project namespace.
+[.console-input]
+[source,bash,role="copypaste",subs=attributes+]
+----
+{login_command}
+----
 +
-[.bordershadow]
-image::03/openshift-web-terminal-ready.png[The OpenShift Web Terminal panel open and ready with an active shell prompt]
+When prompted, answer `y` to accept the insecure connection:
++
+[.console-output]
+[source,text]
+----
+The server uses a certificate signed by an unknown authority.
+You can bypass the certificate check, but any data you send to the server could be intercepted by others.
+Use insecure connections? (y/n): y
+
+WARNING: Using insecure TLS client config. Setting this option is not supported!
+
+Login successful.
+
+You have one project on this server: "user1"
+
+Using project "user1".
+Welcome! See 'oc help' to get started.
+----
++
+You should see your project `{user}` which has been pre-created for you.
 
 == Testing the API Endpoints
 
@@ -46,7 +65,7 @@ You will probe two endpoints to validate the service:
 
 === Health Check
 
-Run the following command in the OpenShift Web Terminal to query the health endpoint.
+Run the following command in the *Terminal* to query the health endpoint.
 
 .Health check request
 [.console-input]

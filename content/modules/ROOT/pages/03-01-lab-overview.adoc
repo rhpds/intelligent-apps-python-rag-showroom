@@ -73,7 +73,12 @@ image::03/default-project.png[Your dedicated user project home showing available
 |Persistent storage for data and models
 |===
 
-. These resources are all cloud-native, and to see the running pods for these services, you need to switch to the main OpenShift Console. In the hand side of your page, select the *OpenShift Console* tab.
+. These resources are all cloud-native, and to see the running pods for these services, you need to switch to the main OpenShift Console. On the left-hand side of your page, select the *OpenShift Console* tab.
++
+[NOTE]
+====
+The console may prompt you to sign in again, use the same username and password as in the *Lab Environment Access* table above.
+====
 +
 [.bordershadow]
 image::03/openshift-console-link.png[Opening the OpenShift Console from the Quick Links menu]

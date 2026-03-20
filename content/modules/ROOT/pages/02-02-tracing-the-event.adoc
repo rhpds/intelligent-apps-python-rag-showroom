@@ -1,0 +1,196 @@
+= 2.2 Tracing the Event-Driven Pipeline
+include::_attributes.adoc[]
+
+Now that the pipeline is imported and your environment is ready, let's walk through the end-to-end event-driven workflow. You will upload a PDF, then trace the event as it flows from MinIO through Kafka, Knative Eventing, and into a Kubeflow Pipeline run.
+
+== Architecture of the Event-Driven Pipeline
+
+Let's quickly review the architecture of the workflow we are about to see.
+
+[.bordershadow]
+image::02/event-driven-pipeline-diagram.png[Architecture diagram of the event-driven PDF ingestion workflow.]
+
+*The flow is as follows:*
+
+. A user uploads a PDF file to a *MinIO S3 bucket*.
+. MinIO immediately sends an event notification to an *Apache Kafka* topic.
+. A *Knative KafkaSource* consumes the message from Kafka and converts it into a standard CloudEvent.
+. The CloudEvent is sent to the *Knative Broker*.
+. A *Knative Trigger* filters for this specific event type and invokes the `kfp-s3-trigger` target.
+. The `kfp-s3-trigger`, a serverless function, receives the event, determines which user's bucket it came from, and launches a *Kubeflow Pipeline* on that user's Data Science Pipelines Application (DSPA).
+. The Kubeflow Pipeline runs a component using the *Docling* library to parse the PDF.
+
+Let's trace the event through each step of this process.
+
+== Step 1: Uploading a PDF to MinIO
+
+The entire process begins by uploading a file to an S3 bucket. The system supports two types of buckets:
+
+* *`pdf-inbox`* — the shared demo bucket (routes to the default KFP endpoint)
+* *`{user}-pdf-inbox`* — your personal bucket, which automatically routes to your own DSPA
+
+Try uploading to your per-user bucket (`{user}-pdf-inbox`):
+
+. First, switch to the {ocp} Console. On the right-hand side of this workshop guide, select the *OpenShift Console* tab at the top.
++
+[NOTE]
+====
+The console may prompt you to sign in again. Use the same username and password as in the *Lab Environment Access* table from the previous section.
+====
+
+. In the {ocp} Console, switch to the *minio* project and navigate to *Networking* -> *Routes*. Click the `minio-console` route URL under *Location*.
++
+[.bordershadow]
+image::02/minio-access-web.png[The OpenShift Console Routes page showing the minio-console route and its URL]
++
+Alternatively, you can find the route from the *Terminal* tab:
++
+[.console-input]
+[source,bash,role="copypaste"]
+----
+oc get route minio-console -n minio -o jsonpath='{.spec.host}{"\n"}'
+----
++
+[.bordershadow]
+image::02/minio-access-terminal.png[Getting the MinIO console URL from the Terminal]
+
+. Log in to the MinIO console using the following credentials:
++
+.MinIO Console Access
+[cols="1,2"]
+|===
+|Username |`minio`
+|Password |`minio123`
+|===
++
+[.bordershadow]
+image::02/minio-login-page.png[The MinIO console login page]
+
+. In the MinIO browser, navigate to the *Object Browser* section in the left sidebar. Find and click on your per-user bucket: `{user}-pdf-inbox`.
++
+[.bordershadow]
+image::02/minio-finding-bucket.png[Navigating to the per-user PDF inbox bucket in MinIO]
+
+. Upload a sample PDF document. You can use any small PDF file from your computer. If you don't have one handy, you can find `example.pdf` in the workbench at:
++
+[.console-input]
+[source,text]
+----
+hello-chris-rag-pipeline/scripts/example.pdf
+----
++
+[.bordershadow]
+image::02/minio-downloading-pdf.png[Downloading the example PDF from the workbench]
++
+Once uploaded, you should see the file in your bucket:
++
+[.bordershadow]
+image::02/minio-pdf-uploaded.png[The uploaded PDF file visible in the MinIO bucket]
+
+As soon as the upload is complete, the MinIO server fires an event. The bucket name is carried along with the event through the entire pipeline, enabling the system to route the processing to the correct user's namespace.
+
+== Step 2: Observing the Event Flow
+
+The `minio-event-bridge` service receives the webhook from MinIO and immediately publishes a CloudEvent message to our Kafka broker. The event includes the bucket name as a CloudEvent extension attribute (`bucketname`), which is critical for multi-user routing downstream.
+
+You can view the event bridge logs to see events flowing through. Switch to the *Terminal* tab and run:
+
+[.console-input]
+[source,bash,role="copypaste"]
+----
+oc logs -n rag-pipeline-workshop -l app=minio-event-bridge --tail=20
+----
+
+You will see log entries showing the CloudEvent being received from MinIO and forwarded to the Kafka broker, confirming the event pipeline is active.
+
+[.bordershadow]
+image::02/step-2-logs.png[Log output from the minio-event-bridge showing CloudEvents being forwarded to Kafka]
+
+== Step 3: From Kafka to Knative
+
+Now, we will see how Knative Eventing picks up the event and delivers it to the trigger service.
+
+. *Knative Broker & Trigger:* The Kafka Broker receives the CloudEvent (including the `bucketname` extension) and delivers it to any matching subscribers. Our `kfp-s3-trigger` service is subscribed via a Trigger. You can verify the Trigger is ready and pointing to the correct service:
++
+[.console-input]
+[source,bash,role="copypaste"]
+----
+oc get trigger minio-pdf-event-trigger -n rag-pipeline-workshop
+----
++
+The output should show the Trigger with `READY = True`, subscribed to the `kafka-broker` with its subscriber destination set to the `kfp-s3-trigger` Knative Service.
++
+[.bordershadow]
+image::02/step-3-logs.png[Output of the oc get trigger command showing READY status]
+
+== Step 4: The Serverless Function (`kfp-s3-trigger`)
+
+The final step in the eventing chain is our custom serverless function. When the Trigger fires, the Knative Broker delivers the CloudEvent to a running instance of our `kfp-s3-trigger` pod.
+
+This is where the *multi-user routing* happens. The `kfp-s3-trigger` service:
+
+. Extracts the bucket name from the CloudEvent body (and/or the `Ce-Bucketname` header).
+. Determines whether it's a per-user bucket (e.g., `{user}-pdf-inbox`) or the shared demo bucket (`pdf-inbox`).
+. Routes to the correct DSPA endpoint:
+* Your bucket `{user}-pdf-inbox` -> `ds-pipeline-dspa.{user}.svc.cluster.local:8443`
+* Shared bucket `pdf-inbox` -> the default `KFP_ENDPOINT` (fallback)
+
+View the logs of this pod in the *Terminal* tab:
+
+[.console-input]
+[source,bash,role="copypaste"]
+----
+oc logs -n rag-pipeline-workshop -l serving.knative.dev/service=kfp-s3-trigger -c user-container --tail=30
+----
+
+You will see log entries confirming:
+
+* A POST request was received with the CloudEvent payload.
+* The bucket name and object key were extracted from the event.
+* The correct KFP endpoint was resolved (e.g., "Bucket '{user}-pdf-inbox' -> user '{user}' -> KFP endpoint: ...").
+* The KFP client was initialized for the resolved endpoint.
+* The pipeline was found and a run was started with the S3 object key as a parameter.
+
+[.bordershadow]
+image::02/step-4-logs.png[Log output from the kfp-s3-trigger pod showing multi-user routing and pipeline run creation]
+
+== Step 5: The Kubeflow Pipeline Run
+
+The event has now successfully traversed the entire serverless infrastructure and launched a data processing workflow in the correct user's namespace.
+
+. Navigate back to the *{rhoai} Dashboard* by selecting the *OpenShift AI* tab on the left-hand side of the {ocp} Console, or by navigating directly to the https://data-science-gateway.{openshift_cluster_ingress_domain}/[OpenShift AI Dashboard^].
++
+[.bordershadow]
+image::03/rhoai-dashboard-main.png[The main dashboard of Red Hat OpenShift AI after logging in]
+
+. Inside your Data Science Project (`{user}`), click on *Pipelines* -> *Runs*.
+
+. A new run will be visible at the top of the list in the *S3 Triggered PDF Runs* experiment.
++
+[.bordershadow]
+image::02/viewing-runs-homepage.png[The Pipeline Runs page showing the triggered run in the S3 Triggered PDF Runs experiment]
+
+Because the `kfp-s3-trigger` service dynamically routes each event to the correct DSPA endpoint, the pipeline run appears in the namespace of the user whose bucket was used. For example:
+
+* A PDF uploaded to `{user}-pdf-inbox` triggers a pipeline run in the `{user}` namespace.
+
+Clicking on the run reveals the graph of the pipeline that was executed. We can see the `download-pdf-from-s3` and `process-pdf-with-docling` components, and by clicking on them, we can inspect their inputs, outputs, and logs.
+
+[.bordershadow]
+image::02/run-in-detail.png[The pipeline run graph showing the download and processing components]
+
+[NOTE]
+====
+The first pipeline run may take a few minutes as the Docling container image is large. Subsequent runs will be faster since the image is cached on each node.
+====
+
+== Summary
+
+You have now successfully:
+
+* [x] Uploaded a PDF to your personal MinIO S3 bucket (`{user}-pdf-inbox`)
+* [x] Observed the event flow from MinIO through Kafka and Knative Eventing
+* [x] Verified the serverless trigger service routed the event to your namespace
+* [x] Confirmed the Kubeflow Pipeline run was automatically triggered
+
+This completes the walkthrough. You have now seen an end-to-end, automated, and event-driven workflow for processing unstructured data on {rhoai} — with automatic multi-user routing that allows each workshop participant to trigger their own pipeline runs independently.
