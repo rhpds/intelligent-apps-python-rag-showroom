@@ -57,6 +57,6 @@ You will be automatically redirected to a real-time graph view of your running p
 
 == Summary
 
-* [x] Configured runtime parameters (`api_endpoint`, `milvus_host`, `milvus_port`, `collection_name`) that wire the pipeline to your namespace's services
-* [x] Created a pipeline run that will fetch incidents, embed them with `all-MiniLM-L6-v2`, and upsert the vectors into Milvus
-* [x] All service endpoints use in-cluster DNS — the same pipeline YAML works across namespaces by swapping parameters
+* [x] Configured runtime parameters (`api_endpoint`, `milvus_host`, `milvus_port`, `collection_name`) that wire the pipeline to the services in your namespace
+* [x] Created a pipeline run that will fetch incidents, generate vector embeddings, and insert them into Milvus
+* [x] All service endpoints use in-cluster DNS — the same pipeline definition works across namespaces simply by changing the parameters

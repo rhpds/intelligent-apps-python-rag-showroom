@@ -138,6 +138,6 @@ Once imported, you are ready to trigger the event-driven flow in the next sectio
 
 == Summary
 
-* [x] Connected to the {rhoai} Dashboard, the {ocp} Console, and the cluster CLI via the standalone Terminal
-* [x] Imported a pre-compiled Kubeflow Pipeline YAML into your Data Science Pipelines Application (DSPA)
-* [x] Registered the pipeline by display name so the event-driven trigger can discover and launch it programmatically
+* [x] Connected to the {rhoai} Dashboard, the {ocp} Console, and the cluster command line via the standalone Terminal
+* [x] Imported a pre-compiled Kubeflow Pipeline definition into your Data Science Project's pipeline server
+* [x] Registered the pipeline by display name so the event-driven trigger can discover and launch it automatically

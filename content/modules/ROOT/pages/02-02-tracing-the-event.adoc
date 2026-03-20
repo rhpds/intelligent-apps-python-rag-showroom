@@ -145,6 +145,6 @@ The first pipeline run may take a few minutes as the Docling container image is 
 
 == Summary
 
-* [x] Traced a CloudEvent end-to-end: MinIO webhook -> Kafka topic -> Knative Broker/Trigger -> serverless function -> KFP API call
-* [x] Observed multi-tenant routing in action — the `kfp-s3-trigger` function extracts the bucket name from the event and resolves the correct per-user DSPA endpoint at runtime
-* [x] Verified the Kubeflow Pipeline run was created in your namespace with the S3 object key injected as a pipeline parameter
+* [x] Traced a CloudEvent end-to-end: MinIO webhook -> Kafka topic -> Knative Broker/Trigger -> serverless function -> Kubeflow Pipeline run
+* [x] Observed multi-tenant routing in action — the `kfp-s3-trigger` function extracts the bucket name and resolves the correct per-user pipeline endpoint at runtime
+* [x] Verified the pipeline run was created in your namespace with the uploaded file's S3 object key passed in as a parameter

@@ -48,6 +48,6 @@ Now that the data has been successfully processed and loaded into our vector dat
 
 == Summary
 
-* [x] Monitored the two-component DAG in real time: `fetch-data-from-api` succeeded, then `ingest-incidents-to-milvus` ran to completion
-* [x] Inspected per-component container logs to confirm the API returned data and the embeddings were inserted into the Milvus collection
+* [x] Monitored the two-component pipeline graph in real time: `fetch-data-from-api` completed, then `ingest-incidents-to-milvus` ran to completion
+* [x] Inspected per-component container logs to confirm the API returned data and the embeddings were inserted into Milvus
 * [x] The vector database is now populated — five incident resolutions are stored as embeddings and ready for similarity search

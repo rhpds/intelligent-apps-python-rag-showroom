@@ -194,6 +194,6 @@ For {company-name}, this means support engineers can now ask complex questions a
 
 == Summary
 
-* [x] Ran a similarity search against the Milvus collection using LangChain's `Retriever` interface and inspected the top-k documents returned
-* [x] Executed a `RetrievalQA` chain that retrieves context from Milvus and passes it to the Granite LLM for grounded generation
-* [x] Closed the loop on the full RAG stack: ServiceNow data -> KFP pipeline -> sentence-transformer embeddings -> Milvus -> LLM-generated answers
+* [x] Ran a similarity search against the Milvus collection and inspected the most relevant incident documents returned
+* [x] Executed a Retrieval-Augmented Generation chain that feeds retrieved context into the Granite LLM to produce a grounded answer
+* [x] Closed the loop on the full RAG system: ServiceNow data -> Kubeflow Pipeline -> vector embeddings in Milvus -> LLM-generated answers
