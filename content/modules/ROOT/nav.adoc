@@ -17,9 +17,9 @@
 ** xref:03-07-monitoring-the-run.adoc[3.7 Monitoring the Pipeline Run]
 ** xref:03-08-querying-milvus.adoc[3.8 Querying the RAG System]
 
-* 4. What's Next?
-** xref:04-whats-next-instructlab.adoc[4.1 Advanced RAG with InstructLab]
+// * 4. What's Next?
+// ** xref:04-whats-next-instructlab.adoc[4.1 Advanced RAG with InstructLab]
 
-* 5. End of Workshop
-** xref:05-end-of-lab.adoc[5.1 Conclusion & Thank You]
+* 4. End of Workshop
+** xref:05-end-of-lab.adoc[4.1 Conclusion & Thank You]
 

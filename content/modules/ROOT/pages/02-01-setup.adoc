@@ -135,3 +135,9 @@ image::02/pipeline-upload.png[The main dashboard of Red Hat OpenShift AI after l
 . Click *Import pipeline* to finish.
 
 Once imported, you are ready to trigger the event-driven flow in the next section.
+
+== Summary
+
+* [x] Connected to the {rhoai} Dashboard, the {ocp} Console, and the cluster CLI via the standalone Terminal
+* [x] Imported a pre-compiled Kubeflow Pipeline YAML into your Data Science Pipelines Application (DSPA)
+* [x] Registered the pipeline by display name so the event-driven trigger can discover and launch it programmatically

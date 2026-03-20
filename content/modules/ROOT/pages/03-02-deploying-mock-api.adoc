@@ -97,3 +97,9 @@ Refresh the page after 30 seconds.
 ====
 
 With the mock API running, you are ready to move on to the next step.
+
+== Summary
+
+* [x] Created an ArgoCD `Application` CR pointing at a Kustomize overlay — ArgoCD pulls the manifests from Git and reconciles continuously
+* [x] Deployed the mock ServiceNow API, which exposes the incident data your pipeline will fetch and embed
+* [x] Verified the pod reached `Running 1/1` in your namespace, confirming the data source is ready

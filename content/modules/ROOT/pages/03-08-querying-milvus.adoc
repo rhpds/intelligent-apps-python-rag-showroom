@@ -12,18 +12,19 @@ An LLM is a very capable tool, but its knowledge is limited to the public data i
 *Retrieval-Augmented Generation (RAG)* solves this problem. Instead of retraining the model, we provide it with relevant, up-to-date information *at the time we ask a question*.
 
 Here's how it works:
-1. When you ask a question, we first search our *Milvus vector database* for past incident tickets that are semantically similar to your question.
-2. We "retrieve" the most relevant resolutions from those tickets.
-3. We then "augment" our prompt to the LLM by including this retrieved context along with your original question.
-4. The LLM uses this specific context to generate a precise, helpful answer based on our company's own data.
+
+. When you ask a question, we first search our *Milvus vector database* for past incident tickets that are semantically similar to your question.
+. We "retrieve" the most relevant resolutions from those tickets.
+. We then "augment" our prompt to the LLM by including this retrieved context along with your original question.
+. The LLM uses this specific context to generate a precise, helpful answer based on our company's own data.
 
 This technique is powerful because you can continuously update the knowledge base (by running your data ingestion pipeline) without ever having to modify or retrain the LLM itself.
 
 == Querying Milvus from a Notebook
 
-1.  Navigate back to the OpenShift AI dashboard and launch your pre-created *Jupyter Workbench* (named "My Workbench" or similar).
+. Navigate back to the {rhoai} Dashboard and launch your pre-created *Jupyter Workbench* (named "My Workbench").
 
-2.  Once JupyterLab has started, use the file browser on the left to navigate to the lab materials folder. The path is:
+. Once JupyterLab has started, use the file browser on the left to navigate to the lab materials folder. The path is:
 +
 [.console-input]
 [source,text]
@@ -31,18 +32,18 @@ This technique is powerful because you can continuously update the knowledge bas
 hello-chris-rag-pipeline/lab-content/3.8
 ----
 
-3.  Open the notebook named `03-08-retrieval-augmented-generation.ipynb`.
+. Open the notebook named `03-08-retrieval-augmented-generation.ipynb`.
 
-4.  Follow the instructions in the notebook by executing the cells one by one. The notebook will guide you through the following steps.
-
-Press the play button each time to step through each block and run the code
+. Follow the instructions in the notebook by executing the cells one by one. The notebook will guide you through the following steps.
++
+Press the play button each time to step through each block and run the code.
 
 === Notebook Step 1: Imports and Connecting to Milvus
 
 The first cells import the necessary libraries and set up the connection to the Milvus vector database that your pipeline just populated. It uses LangChain to simplify the process.
 
-```python
-# In your notebook...
+[source,python]
+----
 from langchain.chains import RetrievalQA
 from langchain_community.llms import VLLMOpenAI
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -67,7 +68,7 @@ vector_db = Milvus(
 retriever = vector_db.as_retriever(search_kwargs={"k": 3}) # Retrieve top 3 results
 
 print("Successfully connected to Milvus and created a retriever.")
-```
+----
 
 === Notebook Step 2: Defining the LLM and Prompt
 
@@ -81,8 +82,8 @@ NOTE: You will need to paste your API token into the `openai_api_key` variable. 
 {litellm_virtual_key}
 ----
 
-```python
-# In your notebook...
+[source,python]
+----
 from langchain.prompts import PromptTemplate
 
 # LLM Inference Server URL
@@ -114,7 +115,7 @@ Helpful Answer:
 """
 
 prompt = PromptTemplate(template=template, input_variables=["context", "question"])
-```
+----
 
 === Notebook Step 3: Understanding the Two-Step RAG Process
 
@@ -124,8 +125,8 @@ The notebook will now show you the RAG process broken down into two distinct ste
 
 First, you'll see what happens during the retrieval step by manually searching the vector database:
 
-```python
-# In your notebook...
+[source,python]
+----
 query = "Give me information on INC001004"
 
 # Step 1: RETRIEVAL - Let's see what documents the vector database finds
@@ -138,7 +139,7 @@ for i, doc in enumerate(retrieved_docs, 1):
     print(f"   Incident ID: {doc.metadata.get('incident_pk', 'N/A')}")
     print(f"   Description: {doc.metadata.get('short_description', 'N/A')}")
     print(f"   Resolution: {doc.page_content[:200]}...")
-```
+----
 
 This step shows you exactly which incident tickets were found to be most similar to your query based on vector similarity search.
 
@@ -146,9 +147,8 @@ This step shows you exactly which incident tickets were found to be most similar
 
 Next, you'll see how the LLM uses these retrieved documents as context to generate an answer:
 
-```python
-# In your notebook...
-
+[source,python]
+----
 # Step 2: GENERATION - Using the retrieved documents to generate an answer
 rag_chain = RetrievalQA.from_chain_type(
     llm=llm,
@@ -164,13 +164,13 @@ resp = rag_chain.invoke({"query": query})
 # Display the final answer
 print("Final Answer from LLM:")
 print(resp["result"])
-```
+----
 
 The output will show:
 
-1. **The retrieved documents**: The top-k most relevant incident tickets found in the vector database
-2. **The final answer**: A concise response generated by the LLM using those documents as context
-3. **Clear connection**: How the retrieved documents directly informed the LLM's answer
+. *The retrieved documents*: The top-k most relevant incident tickets found in the vector database
+. *The final answer*: A concise response generated by the LLM using those documents as context
+. *Clear connection*: How the retrieved documents directly informed the LLM's answer
 
 [.bordershadow]
 image::03/rag-query-output.png[Example output from the Jupyter Notebook showing the LLM's answer and the source incident retrieved from Milvus.]
@@ -179,17 +179,21 @@ image::03/rag-query-output.png[Example output from the Jupyter Notebook showing 
 
 You've now experienced the complete RAG process broken down into its two main components:
 
-1. **🔍 Retrieval**: The system searched the Milvus vector database and found the most semantically similar documents to your query using vector embeddings.
+. *Retrieval*: The system searched the Milvus vector database and found the most semantically similar documents to your query using vector embeddings.
 
-2. **🤖 Generation**: The LLM used those retrieved documents as context to generate a specific, relevant answer based on your company's actual incident data.
+. *Generation*: The LLM used those retrieved documents as context to generate a specific, relevant answer based on your company's actual incident data.
 
 This transparent two-step process demonstrates:
 
-* **How vector similarity works**: You can see exactly which documents were considered most relevant to your query
-* **Context-aware generation**: The LLM's answer is grounded in real, specific incident data from your organization
-* **Transparency**: You understand exactly where the answer came from and can validate its accuracy
-* **Updatable knowledge**: New incidents added to Milvus are immediately available for future queries without retraining the model
+* *How vector similarity works*: You can see exactly which documents were considered most relevant to your query
+* *Context-aware generation*: The LLM's answer is grounded in real, specific incident data from your organization
+* *Transparency*: You understand exactly where the answer came from and can validate its accuracy
+* *Updatable knowledge*: New incidents added to Milvus are immediately available for future queries without retraining the model
 
 For {company-name}, this means support engineers can now ask complex questions and receive answers based on the collective knowledge from thousands of past incident tickets, with full visibility into how those answers were derived.
 
-Congratulations! You have successfully built and tested an end-to-end RAG system on OpenShift AI.
+== Summary
+
+* [x] Ran a similarity search against the Milvus collection using LangChain's `Retriever` interface and inspected the top-k documents returned
+* [x] Executed a `RetrievalQA` chain that retrieves context from Milvus and passes it to the Granite LLM for grounded generation
+* [x] Closed the loop on the full RAG stack: ServiceNow data -> KFP pipeline -> sentence-transformer embeddings -> Milvus -> LLM-generated answers

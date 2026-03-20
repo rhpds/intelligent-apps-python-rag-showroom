@@ -186,11 +186,6 @@ The first pipeline run may take a few minutes as the Docling container image is 
 
 == Summary
 
-You have now successfully:
-
-* [x] Uploaded a PDF to your personal MinIO S3 bucket (`{user}-pdf-inbox`)
-* [x] Observed the event flow from MinIO through Kafka and Knative Eventing
-* [x] Verified the serverless trigger service routed the event to your namespace
-* [x] Confirmed the Kubeflow Pipeline run was automatically triggered
-
-This completes the walkthrough. You have now seen an end-to-end, automated, and event-driven workflow for processing unstructured data on {rhoai} — with automatic multi-user routing that allows each workshop participant to trigger their own pipeline runs independently.
+* [x] Traced a CloudEvent end-to-end: MinIO webhook -> Kafka topic -> Knative Broker/Trigger -> serverless function -> KFP API call
+* [x] Observed multi-tenant routing in action — the `kfp-s3-trigger` function extracts the bucket name from the event and resolves the correct per-user DSPA endpoint at runtime
+* [x] Verified the Kubeflow Pipeline run was created in your namespace with the S3 object key injected as a pipeline parameter

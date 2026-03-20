@@ -20,22 +20,22 @@ image::03/run-graph-in-progress.png[The real-time graph view showing a pipeline 
 
 You can dive into each component to see its logs and details. This is essential for debugging and understanding what the pipeline is doing.
 
-1.  *Click on the `fetch-data-from-api` component* in the graph. A side panel will open.
+. *Click on the `fetch-data-from-api` component* in the graph. A side panel will open.
 
-2.  Select the *Logs* tab. Here you can see the standard output from the component's container. You should see log lines indicating that it is connecting to the mock API and fetching the incident data.
-
+. Select the *Logs* tab. Here you can see the standard output from the component's container. You should see log lines indicating that it is connecting to the mock API and fetching the incident data.
++
 [.bordershadow]
-image::03/fetch-api-component-logs.png[Logs from the 'fetch-data-from-api' component showing a successful data fetch.]
+image::03/fetch-api-component-logs.png[Logs from the fetch-data-from-api component showing a successful data fetch.]
 
-3.  After the first component succeeds, the graph will update, and the `ingest-incidents-to-milvus` component will begin running.
+. After the first component succeeds, the graph will update, and the `ingest-incidents-to-milvus` component will begin running.
 
-4.  Click on the `ingest-incidents-to-milvus` component and view its *Logs* tab. You will see output indicating that it is:
-    * Connecting to the Milvus database.
-    * Loading the sentence-transformer model to generate embeddings.
-    * Inserting the incident data and their vector embeddings into the Milvus collection.
-
+. Click on the `ingest-incidents-to-milvus` component and view its *Logs* tab. You will see output indicating that it is:
+* Connecting to the Milvus database.
+* Loading the sentence-transformer model to generate embeddings.
+* Inserting the incident data and their vector embeddings into the Milvus collection.
++
 [.bordershadow]
-image::03/ingest-milvus-component-logs.png[Logs from the 'ingest-incidents-to-milvus' component showing successful data ingestion.]
+image::03/ingest-milvus-component-logs.png[Logs from the ingest-incidents-to-milvus component showing successful data ingestion.]
 
 == Verifying Successful Completion
 
@@ -45,3 +45,9 @@ The entire pipeline run should take a few minutes to complete. Once finished, bo
 image::03/run-graph-succeeded.png[The graph view showing that all pipeline components have completed successfully.]
 
 Now that the data has been successfully processed and loaded into our vector database, we are ready to test the RAG system by querying it from a notebook.
+
+== Summary
+
+* [x] Monitored the two-component DAG in real time: `fetch-data-from-api` succeeded, then `ingest-incidents-to-milvus` ran to completion
+* [x] Inspected per-component container logs to confirm the API returned data and the embeddings were inserted into the Milvus collection
+* [x] The vector database is now populated — five incident resolutions are stored as embeddings and ready for similarity search

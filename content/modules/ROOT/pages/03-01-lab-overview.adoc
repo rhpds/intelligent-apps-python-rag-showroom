@@ -180,16 +180,6 @@ Watch for the cell execution indicator `[*]` which shows when a cell is running,
 
 == Summary
 
-You have now successfully:
-
-* [x] Connected to the {rhoai} environment
-* [x] Explored your pre-configured project resources
-* [x] Launched and accessed your Jupyter workbench
-* [x] Executed Python code to query an LLM programmatically
-
-With this baseline established, you're ready to proceed to the next phase where you'll deploy the mock ServiceNow API that will serve as the data source for our RAG system.
-
-[NOTE]
-====
-The LLM connection you just tested uses the same OpenAI-compatible API pattern that you'll use throughout the workshop. This consistent interface makes it easy to integrate LLM capabilities into various components of your RAG pipeline.
-====
+* [x] Explored the pre-configured Data Science Project: workbench, pipeline server, and cluster storage provisioned per user
+* [x] Switched between the {rhoai} Dashboard (ML-focused) and the {ocp} Console (infrastructure-focused) to view the same resources from different perspectives
+* [x] Queried a Granite LLM via the OpenAI-compatible `/v1/chat/completions` API — the same interface the RAG chain will use later

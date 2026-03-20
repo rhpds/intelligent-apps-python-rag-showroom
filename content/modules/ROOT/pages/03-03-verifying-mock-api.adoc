@@ -106,8 +106,8 @@ curl 'http://mock-servicenow-api-svc.{user}.svc.cluster.local:8080/api/v1/incide
 
 The response should be a JSON object with a `result` array containing two incident records, along with pagination metadata.
 
-[.bordershadow]
-image::03/api-incidents-check-success.png[Terminal output showing a formatted JSON response from the incidents endpoint]
+// [.bordershadow]
+// image::03/api-incidents-check-success.png[Terminal output showing a formatted JSON response from the incidents endpoint]
 
 .Incident data response
 [.console-output]
@@ -169,3 +169,9 @@ When your pipeline runs, it will retrieve all five records for embedding and ing
 
 With both endpoints confirmed, the mock API is fully operational.
 You are now ready to deploy the Milvus vector database.
+
+== Summary
+
+* [x] Hit the health and incidents endpoints over the internal `Service` DNS (`<svc>.<ns>.svc.cluster.local`) to validate the mock API
+* [x] Inspected the JSON response structure — each incident carries a description and resolution that the pipeline will embed as vectors
+* [x] Confirmed the data source is serving all five closed incidents that will populate the Milvus collection
