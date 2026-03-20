@@ -80,7 +80,7 @@ Once imported, you are ready to trigger the event-driven flow.
 The entire process begins by uploading a file to an S3 bucket. The system supports two types of buckets:
 
 * **`pdf-inbox`** — the shared demo bucket (routes to the default KFP endpoint)
-* **`{user}-pdf-inbox`** — per-user buckets (e.g., `user1-pdf-inbox`, `user2-pdf-inbox`) that automatically route to each user's own DSPA
+* **`{user}-pdf-inbox`** — your personal bucket, which automatically routes to your own DSPA
 
 Try uploading to your per-user bucket (`{user}-pdf-inbox`):
 
@@ -155,9 +155,9 @@ The final step in the eventing chain is our custom serverless function. When the
 This is where the **multi-user routing** happens. The `kfp-s3-trigger` service:
 
 1.  Extracts the bucket name from the CloudEvent body (and/or the `Ce-Bucketname` header).
-2.  Determines whether it's a per-user bucket (e.g., `user1-pdf-inbox`) or the shared demo bucket (`pdf-inbox`).
+2.  Determines whether it's a per-user bucket (e.g., `{user}-pdf-inbox`) or the shared demo bucket (`pdf-inbox`).
 3.  Routes to the correct DSPA endpoint:
-    * Per-user bucket `user1-pdf-inbox` -> `ds-pipeline-dspa.user1.svc.cluster.local:8443`
+    * Your bucket `{user}-pdf-inbox` -> `ds-pipeline-dspa.{user}.svc.cluster.local:8443`
     * Shared bucket `pdf-inbox` -> the default `KFP_ENDPOINT` (fallback)
 
 View the logs of this pod:
@@ -189,8 +189,7 @@ The event has now successfully traversed the entire serverless infrastructure an
 
 Because the `kfp-s3-trigger` service dynamically routes each event to the correct DSPA endpoint, the pipeline run appears in the namespace of the user whose bucket was used. For example:
 
-* A PDF uploaded to `user1-pdf-inbox` triggers a pipeline run in the `user1` namespace.
-* A PDF uploaded to `user2-pdf-inbox` triggers a pipeline run in the `user2` namespace.
+* A PDF uploaded to `{user}-pdf-inbox` triggers a pipeline run in the `{user}` namespace.
 
 Clicking on the run reveals the graph of the pipeline that was executed. We can see the `download-pdf-from-s3` and `process-pdf-with-docling` components, and by clicking on them, we can inspect their inputs, outputs, and logs.
 
