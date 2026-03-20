@@ -7,7 +7,7 @@ You will use the standalone *Terminal* provided in this workshop — accessible 
 [NOTE]
 ====
 The mock API is exposed *internally* within the cluster via a Kubernetes `Service` named `mock-servicenow-api-svc` on port `8080`.
-It is not reachable from outside the cluster; the Terminal provides an in-cluster shell from which the service DNS name resolves correctly.
+Since the workshop Terminal runs outside the cluster's internal network, we use `oc exec` to run `curl` commands directly inside the pod.
 ====
 
 == Accessing the Terminal
@@ -65,16 +65,14 @@ You will probe two endpoints to validate the service:
 
 === Health Check
 
-Run the following command in the *Terminal* to query the health endpoint.
+Run the following command in the *Terminal* to query the health endpoint. This uses `oc exec` to run `curl` inside the mock API pod itself.
 
 .Health check request
 [.console-input]
 [source,bash,role="copypaste",subs=attributes+]
 ----
-curl http://mock-servicenow-api-svc.{user}.svc.cluster.local:8080/api/v1/health <1> <2>
+oc exec deploy/mock-servicenow-api -n {user} -- curl -s http://localhost:8080/api/v1/health
 ----
-<1> `{user}` is your project namespace. The full hostname follows the Kubernetes internal DNS pattern: `<service>.<namespace>.svc.cluster.local`.
-<2> Port `8080` is the port declared on the Kubernetes `Service` resource, as defined in the Kustomize overlay you deployed.
 
 You should see the following JSON response, confirming the API is up and running:
 
@@ -87,8 +85,8 @@ You should see the following JSON response, confirming the API is up and running
 
 [TIP]
 ====
-If the command hangs or returns a connection error, the pod may still be initializing.
-Wait 30 seconds and re-run the command, then verify the `mock-servicenow-api-...` pod shows a *Running* status under *Workloads* → *Pods*.
+If the command returns an error, the pod may still be initializing.
+Wait 30 seconds and re-run the command, then verify the `mock-servicenow-api-...` pod shows a *Running* status under *Workloads* -> *Pods* in the {ocp} Console.
 ====
 
 === Fetching Incident Data
@@ -100,9 +98,10 @@ The output is piped through `jq` to pretty-print the JSON structure.
 [.console-input]
 [source,bash,role="copypaste",subs=attributes+]
 ----
-curl 'http://mock-servicenow-api-svc.{user}.svc.cluster.local:8080/api/v1/incidents?state=closed&limit=2' | jq <1>
+oc exec deploy/mock-servicenow-api -n {user} -- curl -s 'http://localhost:8080/api/v1/incidents?state=closed&limit=2'
 ----
-<1> `state=closed` and `limit=2` are query parameters accepted by the mock API. Your Kubeflow Pipeline will call this same endpoint — without the `limit` parameter — to retrieve all closed incidents for embedding and ingestion into Milvus.
+
+NOTE: `state=closed` and `limit=2` are query parameters accepted by the mock API. Your Kubeflow Pipeline will call this same endpoint — without the `limit` parameter — to retrieve all closed incidents for embedding and ingestion into Milvus.
 
 The response should be a JSON object with a `result` array containing two incident records, along with pagination metadata.
 
@@ -172,6 +171,6 @@ You are now ready to deploy the Milvus vector database.
 
 == Summary
 
-* [x] Hit the health and incidents endpoints over the internal `Service` DNS (`<svc>.<ns>.svc.cluster.local`) to validate the mock API
+* [x] Hit the health and incidents endpoints via `oc exec` to validate the mock API
 * [x] Inspected the JSON response structure — each incident carries a description and resolution that the pipeline will embed as vectors
 * [x] Confirmed the data source is serving all five closed incidents that will populate the Milvus collection
