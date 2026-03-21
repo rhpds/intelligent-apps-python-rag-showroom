@@ -72,7 +72,13 @@ As soon as the upload is complete, the MinIO server fires an event. The bucket n
 
 == Step 2: Observing the Event Flow
 
+
+
 The `minio-event-bridge` service receives the webhook from MinIO and immediately publishes a CloudEvent message to our Kafka broker. The event includes the bucket name as a CloudEvent extension attribute (`bucketname`), which is critical for multi-user routing downstream.
+
+A setup has been configured for you in the namespace `rag-pipeline-workshop` and you can review it from the **OpenShift Console** tab switching to the **rag-pipeline-workshop** project. From the left side menu, go to **Workloads**->**Topology**
+
+image::02/topology.png[Kafka, Knative and CloudEvents]
 
 Behind the scenes, the event bridge logs show the CloudEvent being received and forwarded.
 
