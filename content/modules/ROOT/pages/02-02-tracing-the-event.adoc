@@ -74,7 +74,15 @@ As soon as the upload is complete, the MinIO server fires an event. The bucket n
 
 The `minio-event-bridge` service receives the webhook from MinIO and immediately publishes a CloudEvent message to our Kafka broker. The event includes the bucket name as a CloudEvent extension attribute (`bucketname`), which is critical for multi-user routing downstream.
 
-Behind the scenes, the event bridge logs show the CloudEvent being received and forwarded:
+Behind the scenes, the event bridge logs show the CloudEvent being received and forwarded.
+
+In the **Terminal** tab, run the following command to see it:
+
+[.console-input]
+[source,bash,role="copypaste",subs=attributes+]
+----
+oc logs -n rag-pipeline-workshop -l app=minio-event-bridge --tail=20
+----
 
 [.bordershadow]
 image::02/step-2-logs.png[Log output from the minio-event-bridge showing CloudEvents being forwarded to Kafka]
@@ -86,6 +94,21 @@ Now, let's see how Knative Eventing picks up the event and delivers it to the tr
 The Kafka Broker receives the CloudEvent (including the `bucketname` extension) and delivers it to any matching subscribers. Our `kfp-s3-trigger` service is subscribed via a Knative Trigger that filters for MinIO upload events.
 
 The Trigger is pre-configured and ready, as shown below:
+
+[.console-input]
+[source,bash,role="copypaste",subs=attributes+]
+----
+oc get trigger minio-pdf-event-trigger -n rag-pipeline-workshop
+----
+
+You should see something similar:
+
+[.console-output]
+[source,bash,subs=attributes+]
+----
+NAME                      BROKER         SUBSCRIBER_URI                                                  AGE     READY   REASON
+minio-pdf-event-trigger   kafka-broker   http://kfp-s3-trigger.rag-pipeline-workshop.svc.cluster.local   3m40s   True    
+----
 
 [.bordershadow]
 image::02/step-3-logs.png[Output of the oc get trigger command showing READY status]
@@ -104,6 +127,11 @@ This is where the *multi-user routing* happens. The `kfp-s3-trigger` service:
 
 The trigger service logs show the multi-user routing in action — extracting the bucket name, resolving the DSPA endpoint, and starting the pipeline run:
 
+[.console-input]
+[source,bash,role="copypaste",subs=attributes+]
+----
+oc logs -n rag-pipeline-workshop -l serving.knative.dev/service=kfp-s3-trigger -c user-container --tail=30
+----
 [.bordershadow]
 image::02/step-4-logs.png[Log output from the kfp-s3-trigger pod showing multi-user routing and pipeline run creation]
 
