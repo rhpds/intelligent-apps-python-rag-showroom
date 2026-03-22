@@ -1,9 +1,9 @@
-= Building an Enterprise RAG System with OpenShift AI
+= Building Intelligent Apps with RAG on Kubernetes: From Raw Data to Real-Time Insights
 include::_attributes.adoc[]
 
 == Workshop Overview
 
-Welcome to the {company-name} RAG Workshop! This {ic-lab} will illustrate how to combine event-driven serverless applications, data science pipelines, and a vector database to solve a real-world enterprise challenge using https://www.redhat.com/en/topics/ai/what-are-large-language-models[Large Language Models (LLMs)^].
+Welcome! This {ic-lab} will illustrate how to combine event-driven serverless applications, data science pipelines, and a vector database to solve a real-world enterprise challenge using https://www.redhat.com/en/topics/ai/what-are-large-language-models[Large Language Models (LLMs)^].
 
 The scenario for this lab is that we all work for "{company-name}", a large company looking to leverage AI to improve its IT support operations. Our goal is to build a prototype https://www.redhat.com/en/topics/ai/what-is-retrieval-augmented-generation[Retrieval-Augmented Generation (RAG)^] system that taps into the vast knowledge base of closed ServiceNow tickets, making it instantly searchable for support engineers through a conversational AI assistant.
 
@@ -39,18 +39,18 @@ This is a tentative timetable for the materials that will be presented.
 | Name |Duration |Type |Description
 
 |The Parasol Company Scenario |15 | Presentation
-a|- We discuss the benefits of using https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai[OpenShift AI^], https://www.kubeflow.org/docs/components/pipelines/introduction/[Data Science Pipelines^], and https://milvus.io/[Milvus^] for this solution.
+a|- *Solution Design:* We discuss the benefits of using https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai[OpenShift AI^], https://www.kubeflow.org[Kubeflow Pipelines^], and https://milvus.io/[Milvus^] for this solution.
 
-|Event-Driven PDF Pipeline |20 | Guided Walkthrough
-a|- You will explore a real-time data ingestion pipeline.
-- An upload of a PDF to an S3 bucket will automatically trigger a https://www.kubeflow.org/docs/components/pipelines/introduction/[Kubeflow Pipeline^] via https://knative.dev/docs/eventing/[Knative Eventing^] and https://kafka.apache.org/[Kafka^].
-- This showcases the event-driven capabilities of the platform.
-
-|Lab: Building the API-to-RAG Pipeline |45 | Hands-On
+|Building the API-to-RAG Pipeline |45 | Hands-On
 a|- *Lab Setup:* Attendees log in and explore their pre-created OpenShift AI project.
 - *Deploy & Verify Mock API:* Attendees deploy a mock ServiceNow API using ArgoCD and test its endpoint.
 - *Run KFP Pipeline:* Attendees import and run a Kubeflow Pipeline that fetches data from the API, generates embeddings, and populates the Milvus vector database.
 - *Query the RAG System:* Attendees use a Jupyter Notebook to ask questions against the system and see the contextually relevant answers retrieved from Milvus.
+
+|Event-Driven PDF Pipeline |20 | Guided Walkthrough
+a|- *Explore the Pipeline:* You will explore a real-time data ingestion pipeline.
+- *Trigger an Event:* An upload of a PDF to an S3 bucket will automatically trigger a https://www.kubeflow.org/docs/components/pipelines/introduction/[Kubeflow Pipeline^] via https://knative.dev/docs/eventing/[Knative Eventing^] and https://kafka.apache.org/[Kafka^].
+- *See It in Action:* This showcases the event-driven capabilities of the platform.
 
 |=========================================================
 

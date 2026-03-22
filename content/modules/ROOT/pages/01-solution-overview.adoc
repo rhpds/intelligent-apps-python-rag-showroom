@@ -30,6 +30,6 @@ This approach offers significant advantages over traditional knowledge managemen
 
 We have carefully chosen a set of powerful, cloud-native technologies to build this solution on Red Hat OpenShift:
 
-* *https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai[OpenShift AI] & Data Science Pipelines:* OpenShift AI provides a comprehensive, pre-integrated platform for the entire AI/ML lifecycle. We will use *https://www.kubeflow.org/docs/components/pipelines/[Kubeflow Pipelines]* to build repeatable, scalable, and automated data ingestion workflows that process our ServiceNow tickets and PDFs.
+* *https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai[OpenShift AI]* provides a comprehensive, pre-integrated platform for the entire AI/ML lifecycle. We will use *https://www.kubeflow.org/docs/components/pipelines/[Kubeflow Pipelines]* to build repeatable, scalable, and automated data ingestion workflows that process our ServiceNow tickets and PDFs.
 * *https://milvus.io/[Milvus] Vector Database on OpenShift:* Milvus is a leading open-source vector database designed for high-performance similarity searches at scale. Running it on OpenShift gives us enterprise-grade reliability, scalability, and security.
 * *https://knative.dev/docs/eventing/[Knative Eventing] for Real-Time Processing:* For document ingestion, we will use Knative to create an event-driven workflow. When a new PDF is uploaded, a serverless function will automatically trigger our data pipeline to process and index the document.

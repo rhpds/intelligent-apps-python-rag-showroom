@@ -1,26 +1,39 @@
-= 5.1 End of Workshop
+= 4.1 End of Workshop
 include::_attributes.adoc[]
 
 == Congratulations!
-:slide:
 
-You have successfully completed the *Enterprise RAG System Workshop*!
+You have successfully completed *Building Intelligent Apps with RAG on Kubernetes: From Raw Data to Real-Time Insights*!
 
-In this lab, you have taken on the role of an engineer at {company-name} and have built a significant prototype to solve a real-world business problem.
-
-You have successfully:
-
-* Deployed a mock ServiceNow REST API using ArgoCD.
-* Imported and configured a Data Science Pipeline in OpenShift AI.
-* Executed the pipeline to automatically ingest and process data, populating a Milvus vector database.
-* Queried the resulting RAG system from a Jupyter Notebook to retrieve context-aware answers from your private data.
-* Explored how an event-driven architecture using Knative and Kafka can automate data ingestion in real-time.
+Starting from the business problem — thousands of resolved incident tickets locked away in ServiceNow with no way to search or leverage them — you built a complete, end-to-end Retrieval-Augmented Generation system on {ocp-ai}.
 
 [.bordershadow]
-image::02/event-driven-pipeline-diagram.png[Event-driven pipeline diagram.]
+image::01/rag-architecture-overview.png[High-level overview of the Retrieval-Augmented Generation (RAG) architecture.]
+
+== What You Built
+
+Throughout this workshop, you:
+
+* *Deployed a mock ServiceNow API* via ArgoCD to serve as the incident data source
+* *Stood up a Milvus vector database* to store and search vector embeddings at scale
+* *Imported and ran a Data Science Pipeline* in {ocp-ai} that fetched incident records, generated embeddings, and ingested them into Milvus
+* *Queried the RAG system* from a Jupyter Notebook, retrieving context-aware answers grounded in your private data
+* *Explored event-driven ingestion* using Knative and Kafka to automatically process PDF documents in real-time
+
+Each of these components — the data source, the vector store, the orchestration pipeline, and the serving layer — mirrors what a production RAG deployment looks like inside an enterprise.
+
+== Leave Us Your Feedback
+
+We'd really appreciate it! Your feedback helps us improve this workshop and build better content for future sessions.
+
+Scan the QR code below or visit the link to leave a quick review:
+
+[.text-center]
+image::05/chart.png[QR code to leave session feedback,300]
+
+[.text-center]
+https://sched.co/2CW1f[*Leave feedback on Sched*^]
 
 == Thank You
 
-We hope this workshop has provided valuable hands-on experience and insight into how Red Hat OpenShift AI can be used to build powerful, scalable, and secure AI-driven solutions. The combination of data science pipelines, serverless eventing, and enterprise-grade infrastructure provides a robust platform for tackling your organization's most complex challenges.
-
-Thank you for your time and participation!
+Thank you for your time and participation! We hope this workshop gave you practical, hands-on experience with the tools and patterns behind enterprise RAG — and sparked ideas for how you can apply them in your own organization.

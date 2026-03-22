@@ -3,19 +3,19 @@
 ** xref:01-problem-statement.adoc[1.2 The Knowledge Gap]
 ** xref:01-solution-overview.adoc[1.3 Proposed RAG Architecture]
 
-* 2. Event-Driven PDF Ingestion
-** xref:02-01-setup.adoc[2.1 Setup & Pipeline Import]
-** xref:02-02-tracing-the-event.adoc[2.2 Tracing the Event-Driven Pipeline]
+* 2. Building the API-to-RAG Pipeline
+** xref:02-01-lab-overview.adoc[2.1 Lab Overview & Setup]
+** xref:02-02-deploying-mock-api.adoc[2.2 Deploying the Mock ServiceNow API]
+** xref:02-03-verifying-mock-api.adoc[2.3 Verifying the Mock API]
+** xref:02-04-deploying-milvus.adoc[2.4 Deploying the RAG Vector Database (Milvus)]
+** xref:02-05-importing-the-pipeline.adoc[2.5 Importing the Data Science Pipeline]
+** xref:02-06-creating-a-pipeline-run.adoc[2.6 Creating and Configuring a Pipeline Run]
+** xref:02-07-monitoring-the-run.adoc[2.7 Monitoring the Pipeline Run]
+** xref:02-08-querying-milvus.adoc[2.8 Querying the RAG System]
 
-* 3. Lab: Building the API-to-RAG Pipeline
-** xref:03-01-lab-overview.adoc[3.1 Lab Overview & Setup]
-** xref:03-02-deploying-mock-api.adoc[3.2 Deploying the Mock ServiceNow API]
-** xref:03-03-verifying-mock-api.adoc[3.3 Verifying the Mock API]
-** xref:03-04-deploying-milvus.adoc[3.4 Deploying the RAG Vector Database (Milvus)]
-** xref:03-05-importing-the-pipeline.adoc[3.5 Importing the Data Science Pipeline]
-** xref:03-06-creating-a-pipeline-run.adoc[3.6 Creating and Configuring a Pipeline Run]
-** xref:03-07-monitoring-the-run.adoc[3.7 Monitoring the Pipeline Run]
-** xref:03-08-querying-milvus.adoc[3.8 Querying the RAG System]
+* 3. Event-Driven PDF Ingestion
+** xref:03-01-setup.adoc[3.1 Setup & Pipeline Import]
+** xref:03-02-tracing-the-event.adoc[3.2 Tracing the Event-Driven Pipeline]
 
 // * 4. What's Next?
 // ** xref:04-whats-next-instructlab.adoc[4.1 Advanced RAG with InstructLab]
