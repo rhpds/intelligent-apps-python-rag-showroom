@@ -78,7 +78,22 @@ Using project "user1".
 Welcome! See 'oc help' to get started.
 ----
 +
-You should see your project `{user}` which has been pre-created for you.
+. Make sure you are working in the {user} namespace, which has been pre-created for you.
++
+[.console-input]
+[source,bash,role="copypaste",subs=attributes+]
+----
+oc project {user}
+----
+You should see an output similar to the following:
++
+[.console-output]
+[source,text,subs=attributes+]
+----
+Now using project "{user}" on server "https://api.cluster-cxfls.dynamic.redhatworkshops.io:6443".
+----
+
+
 
 == Import the PDF Processing Pipeline
 
