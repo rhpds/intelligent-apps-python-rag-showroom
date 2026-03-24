@@ -47,7 +47,7 @@ a|- *Lab Setup:* Attendees log in and explore their pre-created OpenShift AI pro
 - *Run KFP Pipeline:* Attendees import and run a Kubeflow Pipeline that fetches data from the API, generates embeddings, and populates the Milvus vector database.
 - *Query the RAG System:* Attendees use a Jupyter Notebook to ask questions against the system and see the contextually relevant answers retrieved from Milvus.
 
-|Event-Driven PDF Pipeline |20 | Guided Walkthrough
+|Event-Driven PDF Pipeline |20 | Hands-On
 a|- *Explore the Pipeline:* You will explore a real-time data ingestion pipeline.
 - *Trigger an Event:* An upload of a PDF to an S3 bucket will automatically trigger a https://www.kubeflow.org/docs/components/pipelines/introduction/[Kubeflow Pipeline^] via https://knative.dev/docs/eventing/[Knative Eventing^] and https://kafka.apache.org/[Kafka^].
 - *See It in Action:* This showcases the event-driven capabilities of the platform.
