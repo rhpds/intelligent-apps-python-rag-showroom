@@ -1,4 +1,4 @@
-= 3.3 Verifying the Mock API
+= 2.3 Verifying the Mock API
 include::_attributes.adoc[]
 
 With the mock API deployed, you will now send HTTP requests to two of its endpoints to confirm the service is reachable and returning data correctly.
@@ -44,7 +44,13 @@ Using project "user1".
 Welcome! See 'oc help' to get started.
 ----
 +
-You should see your project `{user}` which has been pre-created for you.
+You should see your project `{user}` which has been pre-created for you. If the active project is different, switch to it with:
++
+[.console-input]
+[source,bash,role="copypaste",subs=attributes+]
+----
+oc project {user}
+----
 
 == Testing the API Endpoints
 

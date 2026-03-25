@@ -1,4 +1,4 @@
-= 3.5 Importing the Data Science Pipeline
+= 2.5 Importing the Data Science Pipeline
 include::_attributes.adoc[]
 
 Now that the mock API and Milvus database are running, we need to import the pipeline that connects them. A Kubeflow Pipeline can be defined in Python and then compiled into a static YAML file. This file contains the complete, portable definition of the pipeline's components and logic.
@@ -16,7 +16,7 @@ First, we need to get the pipeline definition file from your Jupyter environment
 [.bordershadow]
 image::03/open-project.png[Opening your dedicated user project]
 
-. Go to the *Workbenches* tab and launch your workbench (named "My Workbench") by clicking on its name.
+. Go to the *Workbenches* tab and launch your workbench (named "My Workbench") by clicking on its name, or switch to it if it is already open.
 +
 [.bordershadow]
 image::03/launch-workbench.png[Launching the Jupyter Workbench from the OpenShift AI dashboard]
@@ -47,7 +47,10 @@ image::03/pipelines-section.png[Navigating to the Pipelines section of the Data 
 
 . Click the *Import pipeline* button.
 
-. In the "Import pipeline" dialog, ensure the *Upload a file* option is selected.
+[NOTE]
+====
+In the "Import pipeline" dialog, ensure the *Upload a file* option is selected.
+====
 
 . Give your pipeline a name. For consistency, please use the name below:
 +

@@ -1,11 +1,11 @@
-= 3.4 Deploying the Milvus Vector Database
+= 2.4 Deploying the Milvus Vector Database
 include::_attributes.adoc[]
 
 The second major component of our RAG system is the vector database. For this workshop, we are using *Milvus*, a powerful open-source database specifically designed for storing and searching vector embeddings at scale.
 
 Our data pipeline will populate this database with vectors generated from the ServiceNow incident tickets. You will now deploy the Milvus application into your project namespace using the same GitOps approach as the mock API.
 
-== Applying the ArgoCD Application Manifest
+== Applying the ArgoCD Application Manifest for the Milvus Database
 
 You will create the ArgoCD `Application` resource using the *Import YAML* feature built into the OpenShift web console.
 
@@ -61,7 +61,10 @@ Initial synchronization, including pulling the Milvus and etcd container images,
 
 Once ArgoCD has applied the manifest, confirm the pods are healthy from the OpenShift Console.
 
-. In the left navigation menu, go to *Workloads* → *Pods*, and confirm you are in the `{user}` project namespace.
+. In the OpenShift Console, select the `{user}` project from the project dropdown at the top, then navigate to *Workloads* -> *Pods* in the left-hand menu.
++
+[.bordershadow]
+image::03/milvus-openshift.png[The Milvus pod running in the OpenShift Console under Workloads -> Pods]
 
 . Wait until both the `vectordb-etcd-0` and `vectordb-milvus-standalone-...` pods report a *Running* status with `1/1` containers ready.
 +

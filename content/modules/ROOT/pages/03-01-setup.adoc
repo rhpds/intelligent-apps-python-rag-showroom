@@ -1,4 +1,4 @@
-= 2.1 Setup & Pipeline Import
+= 3.1 Setup & Pipeline Import
 include::_attributes.adoc[]
 
 In this section, you will connect to the workshop environment and import the PDF processing pipeline that powers the event-driven demo. This is a one-time setup before you can trigger the automated workflow.
@@ -101,7 +101,7 @@ Before you can trigger a pipeline run, you need to import the PDF processing pip
 
 === Download the Pipeline File from Your Workbench
 
-. In the {rhoai} Dashboard, navigate to your project and launch your *Workbench* (named "My Workbench").
+. In the {rhoai} Dashboard, navigate to your project and launch your *Workbench* (named "My Workbench"), or switch to it if it is already open.
 +
 [.bordershadow]
 image::03/launch-workbench.png[Launching the Jupyter Workbench from the OpenShift AI dashboard]

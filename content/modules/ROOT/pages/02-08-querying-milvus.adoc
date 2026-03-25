@@ -1,4 +1,4 @@
-= 3.8 Querying the RAG System
+= 2.8 Querying the RAG System
 include::_attributes.adoc[]
 
 Now that your pipeline has successfully fetched the ServiceNow data, generated embeddings, and populated the Milvus vector database, you are ready to test the system.
@@ -11,6 +11,9 @@ An LLM is a very capable tool, but its knowledge is limited to the public data i
 
 *Retrieval-Augmented Generation (RAG)* solves this problem. Instead of retraining the model, we provide it with relevant, up-to-date information *at the time we ask a question*.
 
+[.bordershadow]
+image::01/rag-architecture-overview.png[High-level architecture of a Retrieval-Augmented Generation system on Red Hat OpenShift AI]
+
 Here's how it works:
 
 . When you ask a question, we first search our *Milvus vector database* for past incident tickets that are semantically similar to your question.
@@ -22,7 +25,7 @@ This technique is powerful because you can continuously update the knowledge bas
 
 == Querying Milvus from a Notebook
 
-. Navigate back to the {rhoai} Dashboard and launch your pre-created *Jupyter Workbench* (named "My Workbench").
+. Navigate back to the {rhoai} Dashboard and launch your pre-created *Jupyter Workbench* (named "My Workbench"), or switch to it if it is already open.
 
 . Once JupyterLab has started, use the file browser on the left to navigate to the lab materials folder. The path is:
 +
@@ -38,43 +41,18 @@ hello-chris-rag-pipeline/lab-content/3.8
 +
 Press the play button each time to step through each block and run the code.
 
-=== Notebook Step 1: Imports and Connecting to Milvus
+=== Notebook Step 1: Imports
 
-The first cells import the necessary libraries and set up the connection to the Milvus vector database that your pipeline just populated. It uses LangChain to simplify the process.
+The first cells import the necessary libraries (LangChain, HuggingFace, Milvus). Simply run them to load the dependencies.
 
-[source,python]
-----
-from langchain.chains import RetrievalQA
-from langchain_community.llms import VLLMOpenAI
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Milvus
+=== Notebook Step 2: Defining the LLM
 
-# 1. Define which embedding model to use (must match the one used in the pipeline)
-embedding_model = HuggingFaceEmbeddings(
-    model_name="all-MiniLM-L6-v2",
-    model_kwargs={'device': 'cpu'}
-)
+Next, the notebook configures the connection to the LLM via the external LiteLLM MaaS endpoint.
 
-# 2. Connect to the existing Milvus collection, specifying the vector and text fields.
-vector_db = Milvus(
-    embedding_function=embedding_model,
-    connection_args={"host": "vectordb-milvus", "port": "19530"},
-    collection_name="servicenow_incidents",
-    vector_field="embedding",
-    text_field="resolution_notes"
-)
-
-# 3. Create a retriever to search for relevant documents
-retriever = vector_db.as_retriever(search_kwargs={"k": 3}) # Retrieve top 3 results
-
-print("Successfully connected to Milvus and created a retriever.")
-----
-
-=== Notebook Step 2: Defining the LLM and Prompt
-
-Next, the notebook defines the prompt template and configures the connection to the LLM via the external LiteLLM MaaS endpoint. The template instructs the model on how to behave and where to place the retrieved context.
-
-NOTE: You will need to paste your API token into the `openai_api_key` variable. Copy it from here:
+[IMPORTANT]
+====
+You will need to paste your API token into the `openai_api_key` variable, replacing the placeholder string. Copy it from here:
+====
 
 [.console-input]
 [source,text,role="copypaste",subs=attributes+]
@@ -82,42 +60,46 @@ NOTE: You will need to paste your API token into the `openai_api_key` variable. 
 {litellm_virtual_key}
 ----
 
-[source,python]
+[source,python,subs=attributes+]
 ----
-from langchain.prompts import PromptTemplate
-
-# LLM Inference Server URL
-# This points to the external LiteLLM MaaS endpoint.
 inference_server_url = "https://litellm-prod.apps.maas.redhatworkshops.io"
 
-# LLM definition using a client that speaks the OpenAI API format
 llm = VLLMOpenAI(
-    openai_api_key="<paste your litellm_virtual_key here>",
+    openai_api_key="{litellm_virtual_key}",  # <-- Paste your key here
     openai_api_base=f"{inference_server_url}/v1",
     model_name="granite-4-0-h-tiny",
-    temperature=0.1,
+    top_p=0.92,
+    temperature=0.01,
     max_tokens=512,
+    presence_penalty=1.03,
+    streaming=True,
+    callbacks=[StreamingStdOutCallbackHandler()]
 )
-
-# Define the prompt template for our RAG chain
-template = """
-You are a helpful and professional IT support assistant for Parasol Company.
-Use the following context from past incident resolutions to answer the question.
-If the context does not contain the answer, say that you don't have enough information.
-
-Context:
-{context}
-
-Question:
-{question}
-
-Helpful Answer:
-"""
-
-prompt = PromptTemplate(template=template, input_variables=["context", "question"])
 ----
 
-=== Notebook Step 3: Understanding the Two-Step RAG Process
+=== Notebook Step 3: Connecting to Milvus
+
+The next cells connect to the Milvus vector database that your pipeline populated, using the same embedding model (`all-MiniLM-L6-v2`) and collection (`servicenow_incidents`) from the ingestion pipeline.
+
+[source,python]
+----
+embeddings = HuggingFaceEmbeddings(
+    model_name="all-MiniLM-L6-v2",
+    model_kwargs={'device': 'cpu'},
+)
+
+vector_db = Milvus(
+    embedding_function=embeddings,
+    connection_args={"host": "vectordb-milvus", "port": "19530"},
+    collection_name="servicenow_incidents",
+    vector_field="embedding",
+    text_field="resolution_notes"
+)
+
+retriever = vector_db.as_retriever(search_kwargs={"k": 3})
+----
+
+=== Notebook Step 4: Understanding the Two-Step RAG Process
 
 The notebook will now show you the RAG process broken down into two distinct steps to help you understand how the answer is determined.
 
@@ -127,12 +109,9 @@ First, you'll see what happens during the retrieval step by manually searching t
 
 [source,python]
 ----
-query = "Give me information on INC001004"
+query = "A user is reporting that an application is not loading and showing an error page"
 
-# Step 1: RETRIEVAL - Let's see what documents the vector database finds
 retrieved_docs = retriever.get_relevant_documents(query)
-
-print(f"Found {len(retrieved_docs)} relevant documents (top-{len(retrieved_docs)}):")
 
 for i, doc in enumerate(retrieved_docs, 1):
     print(f"Document {i}:")
@@ -145,31 +124,25 @@ This step shows you exactly which incident tickets were found to be most similar
 
 *Step 2: Generation - Using Retrieved Context*
 
-Next, you'll see how the LLM uses these retrieved documents as context to generate an answer:
+Next, you'll see how the LLM uses these retrieved documents as context to generate an answer. The notebook defines a prompt template and a `document_prompt` that formats each retrieved incident with its ID, description, and resolution notes, then passes everything to the LLM via a `RetrievalQA` chain:
 
 [source,python]
 ----
-# Step 2: GENERATION - Using the retrieved documents to generate an answer
 rag_chain = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",
     retriever=retriever,
-    chain_type_kwargs={"prompt": prompt},
+    chain_type_kwargs={"prompt": prompt, "document_prompt": document_prompt},
     return_source_documents=True,
 )
 
-# Execute the full RAG chain (retrieval + generation)
 resp = rag_chain.invoke({"query": query})
-
-# Display the final answer
-print("Final Answer from LLM:")
-print(resp["result"])
 ----
 
 The output will show:
 
-. *The retrieved documents*: The top-k most relevant incident tickets found in the vector database
-. *The final answer*: A concise response generated by the LLM using those documents as context
+. *The retrieved documents*: The top-3 most relevant incident tickets found in the vector database
+. *The streamed answer*: A response generated by the LLM in real time using those documents as context
 . *Clear connection*: How the retrieved documents directly informed the LLM's answer
 
 [.bordershadow]

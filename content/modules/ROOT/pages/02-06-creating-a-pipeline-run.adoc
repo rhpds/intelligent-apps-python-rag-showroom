@@ -10,7 +10,9 @@ With the pipeline imported, you are now ready to create a "run". A pipeline run 
 [.bordershadow]
 image::03/create-run-button.png[The Create run button on the pipeline details page.]
 
-. This will open the "Create run" page. You will need give the run a name (`simple` in the example below) and description (`Simple API to RAG pipeline`), but the most important part is the *Pipeline parameters* section at the bottom.
+. This will open the "Create run" page. First, make sure the correct *Pipeline* and *Pipeline version* are selected. If you have completed the Event-Driven PDF Ingestion lab, you will see two pipeline definitions — select *ServiceNow Ticket Ingestion*.
+
+. You will need give the run a name (`Pipeline Run` in the example below) and description (`Simple API to RAG pipeline`), but the most important part is the *Pipeline parameters* section at the bottom.
 
 . You must fill in the following parameters to tell the pipeline how to connect to the other services running in your project. Copy the values below exactly.
 +

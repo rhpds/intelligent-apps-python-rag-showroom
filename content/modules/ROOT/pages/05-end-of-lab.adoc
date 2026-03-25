@@ -1,4 +1,4 @@
-= 4.1 End of Workshop
+= End of Workshop
 include::_attributes.adoc[]
 
 == Congratulations!

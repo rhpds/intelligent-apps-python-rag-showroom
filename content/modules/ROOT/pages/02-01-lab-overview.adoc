@@ -77,13 +77,13 @@ image::03/default-project.png[Your dedicated user project home showing available
 +
 [NOTE]
 ====
-The console may prompt you to sign in again, use the same username and password as in the *Lab Environment Access* table above.
+The console may prompt you to sign in again. Use your credentials: `{user}` & `{password}`.
 ====
 +
 [.bordershadow]
 image::03/openshift-console-link.png[Opening the OpenShift Console from the Quick Links menu]
 
-. Now, using the left-hand menu, navigate to the *Workloads* section, and click the *Pods* sub-menu. Here, in the `{user}` project, you can see all the running components, like the Pipeline Server, database, and other pre-configured resources.
+. First, make sure you have the `{user}` project selected from the project dropdown at the top of the console. Then, using the left-hand menu, navigate to *Workloads* -> *Pods*. Here you can see all the running components, like the Pipeline Server, database, and other pre-configured resources.
 +
 [.bordershadow]
 image::03/project-topology-view.png[OpenShift Topology view showing the deployed Milvus instance within your project]
@@ -118,7 +118,7 @@ image::03/open-filepath.png[Navigating to the lab materials folder in JupyterLab
 [.bordershadow]
 image::03/open-notebook.png[Opening the LLM example notebook in JupyterLab]
 
-. Copy your API token into the `openai_api_key` variable, replacing the `EMPTY` string:
+. Copy your API token into the `openai_api_key` variable, replacing the `PASTE_YOUR_LITELLM_KEY_HERE` string:
 +
 [.console-input]
 [source,text,role="copypaste",subs=attributes+]

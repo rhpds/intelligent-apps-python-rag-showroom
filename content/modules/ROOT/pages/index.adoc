@@ -56,7 +56,7 @@ a|- *Explore the Pipeline:* You will explore a real-time data ingestion pipeline
 
 == Resources
 
-* https://red.ht/intelligent-apps[Slides: Building Intelligent Apps with RAG on Kubernetes: From Raw Data to Real-Time Insights^]
+* https://docs.google.com/presentation/d/1dyAFEqr8K8iIQprNoItWtZRyA6-OcoeT_uw6uZEZAIo/edit?usp=sharing[Slides: Building Intelligent Apps with RAG on Kubernetes: From Raw Data to Real-Time Insights^]
 
 == Contributing
 
