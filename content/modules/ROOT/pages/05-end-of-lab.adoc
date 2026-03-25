@@ -5,7 +5,7 @@ include::_attributes.adoc[]
 
 You have successfully completed *Building Intelligent Apps with RAG on Kubernetes: From Raw Data to Real-Time Insights*!
 
-Starting from the business problem — thousands of resolved incident tickets locked away in ServiceNow with no way to search or leverage them — you built a complete, end-to-end Retrieval-Augmented Generation system on {ocp-ai}.
+Starting from the business problem, thousands of resolved incident tickets locked away in ServiceNow with no way to search or leverage them, you built a complete, end-to-end Retrieval-Augmented Generation system on {ocp-ai}.
 
 [.bordershadow]
 image::01/rag-architecture-overview.png[High-level overview of the Retrieval-Augmented Generation (RAG) architecture.]
@@ -36,4 +36,4 @@ https://sched.co/2CW1f[*Leave feedback on Sched*^]
 
 == Thank You
 
-Thank you for your time and participation! We hope this workshop gave you practical, hands-on experience with the tools and patterns behind enterprise RAG — and sparked ideas for how you can apply them in your own organization.
+Thank you for your time and participation! We hope this workshop gave you practical, hands-on experience with the projects and patterns behind enterprise RAG (and sparked ideas for how you can apply them in your own organization)!

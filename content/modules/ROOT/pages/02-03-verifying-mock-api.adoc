@@ -104,7 +104,7 @@ The output is piped through `jq` to pretty-print the JSON structure.
 [.console-input]
 [source,bash,role="copypaste",subs=attributes+]
 ----
-oc exec deploy/mock-servicenow-api -n {user} -- curl -s 'http://localhost:8080/api/v1/incidents?state=closed&limit=2'
+oc exec deploy/mock-servicenow-api -n {user} -- curl -s 'http://localhost:8080/api/v1/incidents?state=closed&limit=2' | jq
 ----
 
 NOTE: `state=closed` and `limit=2` are query parameters accepted by the mock API. Your Kubeflow Pipeline will call this same endpoint — without the `limit` parameter — to retrieve all closed incidents for embedding and ingestion into Milvus.
@@ -159,7 +159,7 @@ The response should be a JSON object with a `result` array containing two incide
       "updated_on": "..."
     }
   ],
-  "total_records": 5,
+  "total_records": 4,
   "limit": 2,
   "offset": 0
 }
@@ -167,8 +167,8 @@ The response should be a JSON object with a `result` array containing two incide
 
 [NOTE]
 ====
-Notice the `total_records: 5` field in the response.
-The mock dataset contains five closed incidents in total; the `limit=2` parameter restricted this response to two.
+Notice the `total_records: 4` field in the response.
+The mock dataset contains four closed incidents in total; the `limit=2` parameter restricted this response to two.
 When your pipeline runs, it will retrieve all five records for embedding and ingestion into the Milvus vector database.
 ====
 
@@ -179,4 +179,4 @@ You are now ready to deploy the Milvus vector database.
 
 * [x] Hit the health and incidents endpoints via `oc exec` to validate the mock API
 * [x] Inspected the JSON response structure — each incident carries a description and resolution that the pipeline will embed as vectors
-* [x] Confirmed the data source is serving all five closed incidents that will populate the Milvus collection
+* [x] Confirmed the data source is serving all four closed incidents that will populate the Milvus collection

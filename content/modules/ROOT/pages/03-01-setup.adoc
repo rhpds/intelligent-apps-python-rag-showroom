@@ -125,8 +125,8 @@ image::02/pipeline-download.png[The main dashboard of Red Hat OpenShift AI after
 . In the {rhoai} Dashboard, navigate to the *Pipelines* section within your Data Science Project.
 
 . Click the *Import pipeline* button.
-
-image::02/pipeline-import.png[The main dashboard of Red Hat OpenShift AI after logging in]
++
+image::02/pipeline-import.png[The Import pipeline button in the Pipelines section]
 
 . Give your pipeline this exact name:
 +
@@ -140,12 +140,12 @@ simple-pdf-processing-pipeline
 ====
 The name must match exactly. The event-driven trigger service looks up the pipeline by this display name.
 ====
-
-image::02/pipeline-name.png[The main dashboard of Red Hat OpenShift AI after logging in]
++
+image::02/pipeline-name.png[The pipeline name field filled in with simple-pdf-processing-pipeline]
 
 . Click the *Upload* box and select the `simple-pdf-processing-pipeline.yaml` file that you just downloaded.
-
-image::02/pipeline-upload.png[The main dashboard of Red Hat OpenShift AI after logging in]
++
+image::02/pipeline-upload.png[The pipeline upload dialog with the file selected]
 
 . Click *Import pipeline* to finish.
 
