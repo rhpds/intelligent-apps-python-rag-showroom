@@ -1,4 +1,4 @@
-= 2.2 Tracing the Event-Driven Pipeline
+= 3.2 Tracing the Event-Driven Pipeline
 include::_attributes.adoc[]
 
 Now that the pipeline is imported and your environment is ready, let's walk through the end-to-end event-driven workflow. You will upload a PDF, then trace the event as it flows from MinIO through Kafka, Knative Eventing, and into a Kubeflow Pipeline run.

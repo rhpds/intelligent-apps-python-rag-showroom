@@ -1,4 +1,4 @@
-= Lab Overview & Setup
+= 2.1 Lab Overview & Setup
 include::_attributes.adoc[]
 
 Now it's your turn to get hands-on. In this lab, you will deploy the mock ServiceNow API and the Kubeflow Pipeline that ingests its data into our Milvus vector database.

@@ -1,4 +1,4 @@
-= 3.7 Monitoring the Pipeline Run
+= 2.7 Monitoring the Pipeline Run
 include::_attributes.adoc[]
 
 After starting the pipeline run in the previous step, you were automatically taken to the run's real-time graph view. This interface is where you can monitor the progress of each component in your pipeline.

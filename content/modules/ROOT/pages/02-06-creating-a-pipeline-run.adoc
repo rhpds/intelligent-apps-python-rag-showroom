@@ -1,4 +1,4 @@
-= 3.6 Creating and Configuring a Pipeline Run
+= 2.6 Creating and Configuring a Pipeline Run
 include::_attributes.adoc[]
 
 With the pipeline imported, you are now ready to create a "run". A pipeline run is a single execution of the pipeline's workflow. For this pipeline, you need to provide several parameters so it knows how to connect to the mock API and the Milvus database.

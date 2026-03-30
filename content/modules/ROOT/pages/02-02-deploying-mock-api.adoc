@@ -1,4 +1,4 @@
-= 3.2 Deploying the Mock ServiceNow API
+= 2.2 Deploying the Mock ServiceNow API
 include::_attributes.adoc[]
 
 In this section, you will deploy the mock ServiceNow API into your project namespace.
