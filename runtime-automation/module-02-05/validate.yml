@@ -1,6 +1,7 @@
 ---
 # VALIDATE — 2.5 Importing the Data Science Pipeline
-# Task 1: Pipeline "ServiceNow Ticket Ingestion" exists in DSPA
+# Task 1: DSPA is running
+# Task 2: Pipeline exists in DSPA (check both slug and display name)
 
 - name: Module 02-05 Validation — Pipeline Imported
   hosts: localhost
@@ -8,6 +9,7 @@
   gather_facts: false
   vars:
     ns: "{{ user }}"
+    dspa_svc: "https://ds-pipeline-dspa.{{ user }}.svc.cluster.local:8443"
   tasks:
 
     # ── Check 1: DSPA is running ───────────────────────────────────────────────
@@ -33,10 +35,10 @@
     - name: List pipelines via KFP API
       ansible.builtin.shell: >-
         oc --kubeconfig={{ k8s_kubeconfig }}
-        exec deploy/ds-pipeline-dspa -n {{ ns }}
-        -c ds-pipeline-api-server --
+        exec my-workbench-0 -n {{ ns }}
+        -c my-workbench --
         curl -sk -H "Authorization: Bearer {{ r_token.stdout }}"
-        https://localhost:8443/apis/v2beta1/pipelines
+        {{ dspa_svc }}/apis/v2beta1/pipelines
       register: r_pipelines
       ignore_errors: true
 
@@ -47,7 +49,8 @@
           {{ (r_dspa_deploy.resources | default([]) | length > 0) and
              (r_dspa_deploy.resources[0].status.readyReplicas | default(0) | int >= 1) }}
         _task2_ok: >-
-          {{ 'ServiceNow Ticket Ingestion' in (r_pipelines.stdout | default('')) }}
+          {{ ('servicenow-ticket-ingestion' in (r_pipelines.stdout | default(''))) or
+             ('ServiceNow Ticket Ingestion' in (r_pipelines.stdout | default(''))) }}
 
     # ── Validate ───────────────────────────────────────────────────────────────
     - name: Validate all tasks
@@ -58,4 +61,4 @@
           ✅ Task 2: Pipeline "ServiceNow Ticket Ingestion" is imported
         error_msg: |
           {{ '✅' if _task1_ok else '❌' }} Task 1: {{ 'DSPA running' if _task1_ok else 'ds-pipeline-dspa not ready — this should be pre-provisioned' }}
-          {{ '✅' if _task2_ok else '❌' }} Task 2: {{ 'Pipeline imported' if _task2_ok else 'Pipeline "ServiceNow Ticket Ingestion" not found — download api_to_milvus_pipeline.yaml from your workbench and import it via the RHOAI Dashboard Pipelines section' }}
+          {{ '✅' if _task2_ok else '❌' }} Task 2: {{ 'Pipeline imported' if _task2_ok else 'Pipeline "ServiceNow Ticket Ingestion" not found — download api_to_milvus_pipeline.yaml from your workbench (hello-chris-rag-pipeline/lab-content/3.5/) and import it via the RHOAI Dashboard Pipelines section' }}

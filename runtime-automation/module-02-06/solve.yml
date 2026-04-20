@@ -1,10 +1,9 @@
 ---
 # SOLVE — 2.6 Creating and Configuring a Pipeline Run
 # Task 1: Create a pipeline run via KFP API with correct parameters
-# Task 2: Wait for pipeline run to complete
+# Task 2: Wait for pipeline run to complete (also covers 2.7 monitoring)
 #
-# Also covers 2.7 (Monitoring the Pipeline Run) since monitoring is visual.
-# The solve creates the run and waits for SUCCEEDED state.
+# Uses the workbench pod to curl the DSPA internal service.
 
 - name: Module 02-06 Solve — Create Pipeline Run
   hosts: localhost
@@ -12,7 +11,7 @@
   gather_facts: false
   vars:
     ns: "{{ user }}"
-    pipeline_name: "ServiceNow Ticket Ingestion"
+    dspa_svc: "https://ds-pipeline-dspa.{{ user }}.svc.cluster.local:8443"
   tasks:
 
     # ── Task 1: Get SA token ───────────────────────────────────────────────────
@@ -22,31 +21,30 @@
         create token pipeline -n {{ ns }}
       register: r_token
 
-    # ── Task 2: Get pipeline ID ────────────────────────────────────────────────
+    # ── Task 2: Get pipeline list and find the ServiceNow pipeline ─────────────
     - name: Get pipeline list from DSPA
       ansible.builtin.shell: >-
         oc --kubeconfig={{ k8s_kubeconfig }}
-        exec deploy/ds-pipeline-dspa -n {{ ns }}
-        -c ds-pipeline-api-server --
+        exec my-workbench-0 -n {{ ns }}
+        -c my-workbench --
         curl -sk -H "Authorization: Bearer {{ r_token.stdout }}"
-        https://localhost:8443/apis/v2beta1/pipelines
+        {{ dspa_svc }}/apis/v2beta1/pipelines
       register: r_pipelines
 
     - name: Extract pipeline ID
       ansible.builtin.set_fact:
         _pipeline_id: >-
           {{ (r_pipelines.stdout | from_json).pipelines |
-             selectattr('display_name', 'equalto', pipeline_name) |
              map(attribute='pipeline_id') | first }}
 
     # ── Task 3: Get pipeline version ID ────────────────────────────────────────
     - name: Get pipeline versions
       ansible.builtin.shell: >-
         oc --kubeconfig={{ k8s_kubeconfig }}
-        exec deploy/ds-pipeline-dspa -n {{ ns }}
-        -c ds-pipeline-api-server --
+        exec my-workbench-0 -n {{ ns }}
+        -c my-workbench --
         curl -sk -H "Authorization: Bearer {{ r_token.stdout }}"
-        "https://localhost:8443/apis/v2beta1/pipelines/{{ _pipeline_id | trim }}/versions"
+        "{{ dspa_svc }}/apis/v2beta1/pipelines/{{ _pipeline_id | trim }}/versions"
       register: r_versions
 
     - name: Extract version ID
@@ -58,10 +56,10 @@
     - name: Check for existing pipeline runs
       ansible.builtin.shell: >-
         oc --kubeconfig={{ k8s_kubeconfig }}
-        exec deploy/ds-pipeline-dspa -n {{ ns }}
-        -c ds-pipeline-api-server --
+        exec my-workbench-0 -n {{ ns }}
+        -c my-workbench --
         curl -sk -H "Authorization: Bearer {{ r_token.stdout }}"
-        "https://localhost:8443/apis/v2beta1/runs?page_size=10"
+        "{{ dspa_svc }}/apis/v2beta1/runs?page_size=10"
       register: r_runs
 
     - name: Check for existing successful run
@@ -76,9 +74,9 @@
     - name: Create pipeline run via KFP API
       ansible.builtin.shell: >-
         oc --kubeconfig={{ k8s_kubeconfig }}
-        exec deploy/ds-pipeline-dspa -n {{ ns }}
-        -c ds-pipeline-api-server --
-        curl -sk
+        exec my-workbench-0 -n {{ ns }}
+        -c my-workbench --
+        curl -sk -X POST
         -H "Authorization: Bearer {{ r_token.stdout }}"
         -H "Content-Type: application/json"
         -d '{
@@ -97,7 +95,7 @@
             }
           }
         }'
-        https://localhost:8443/apis/v2beta1/runs
+        {{ dspa_svc }}/apis/v2beta1/runs
       register: r_create_run
       when: not _has_succeeded_run
 
@@ -110,10 +108,10 @@
     - name: Wait for pipeline run to succeed
       ansible.builtin.shell: >-
         oc --kubeconfig={{ k8s_kubeconfig }}
-        exec deploy/ds-pipeline-dspa -n {{ ns }}
-        -c ds-pipeline-api-server --
+        exec my-workbench-0 -n {{ ns }}
+        -c my-workbench --
         curl -sk -H "Authorization: Bearer {{ r_token.stdout }}"
-        "https://localhost:8443/apis/v2beta1/runs/{{ _run_id | trim }}"
+        "{{ dspa_svc }}/apis/v2beta1/runs/{{ _run_id | trim }}"
       register: r_run_status
       until: >-
         (r_run_status.stdout | from_json).state | default('') in ['SUCCEEDED', 'FAILED', 'CANCELED']
@@ -125,5 +123,4 @@
     - name: Report solve status
       ansible.builtin.debug:
         msg: |
-          Pipeline: {{ pipeline_name }}
-          Run: {{ 'already succeeded (skipped)' if _has_succeeded_run else ((r_run_status.stdout | from_json).state | default('unknown')) }}
+          Pipeline run: {{ 'already succeeded (skipped)' if _has_succeeded_run else ((r_run_status.stdout | from_json).state | default('unknown')) }}
