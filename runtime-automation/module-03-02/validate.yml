@@ -1,0 +1,87 @@
+---
+# VALIDATE — 3.2 Tracing the Event-Driven Pipeline
+# Task 1: Knative trigger minio-pdf-event-trigger is Ready
+# Task 2: kfp-s3-trigger pod is running
+# Task 3: minio-event-bridge pod is running
+# Task 4: User's MinIO bucket exists
+
+- name: Module 03-02 Validation — Event-Driven Pipeline
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    ns: "{{ user }}"
+    event_ns: "rag-pipeline-workshop"
+    minio_ns: "minio"
+  tasks:
+
+    # ── Check 1: Knative trigger is ready ──────────────────────────────────────
+    - name: Check Knative trigger status
+      ansible.builtin.shell: >-
+        oc --kubeconfig={{ k8s_kubeconfig }}
+        get trigger minio-pdf-event-trigger -n {{ event_ns }}
+        -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}'
+      register: r_trigger
+      ignore_errors: true
+
+    # ── Check 2: kfp-s3-trigger pod running ────────────────────────────────────
+    - name: Check kfp-s3-trigger pods
+      ansible.builtin.shell: >-
+        oc --kubeconfig={{ k8s_kubeconfig }}
+        get pods -n {{ event_ns }}
+        -l serving.knative.dev/service=kfp-s3-trigger
+        --no-headers 2>/dev/null | grep -c Running
+      register: r_trigger_pods
+      ignore_errors: true
+
+    # ── Check 3: minio-event-bridge running ────────────────────────────────────
+    - name: Check minio-event-bridge
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ k8s_kubeconfig | default(omit) }}"
+        validate_certs: false
+        api_version: apps/v1
+        kind: Deployment
+        name: minio-event-bridge
+        namespace: "{{ event_ns }}"
+      register: r_bridge_deploy
+      ignore_errors: true
+
+    # ── Check 4: User's MinIO bucket exists ────────────────────────────────────
+    - name: Check user's MinIO bucket
+      ansible.builtin.shell: >-
+        oc --kubeconfig={{ k8s_kubeconfig }}
+        exec deploy/minio -n {{ minio_ns }}
+        -- bash -c "
+        mc alias set local http://localhost:9000 minio minio123 --api S3v4 2>/dev/null;
+        mc ls local/{{ user }}-pdf-inbox/ 2>&1
+        "
+      register: r_bucket
+      ignore_errors: true
+
+    # ── Build results ──────────────────────────────────────────────────────────
+    - name: Build task results
+      ansible.builtin.set_fact:
+        _task1_ok: >-
+          {{ r_trigger.stdout | default('') == 'True' }}
+        _task2_ok: >-
+          {{ (r_trigger_pods.stdout | default('0') | int) >= 1 }}
+        _task3_ok: >-
+          {{ (r_bridge_deploy.resources | default([]) | length > 0) and
+             (r_bridge_deploy.resources[0].status.readyReplicas | default(0) | int >= 1) }}
+        _task4_ok: >-
+          {{ r_bucket.rc | default(1) == 0 }}
+
+    # ── Validate ───────────────────────────────────────────────────────────────
+    - name: Validate all tasks
+      validation_check:
+        check: "{{ _task1_ok and _task2_ok and _task3_ok }}"
+        pass_msg: |
+          ✅ Task 1: Knative trigger minio-pdf-event-trigger is Ready
+          ✅ Task 2: kfp-s3-trigger serverless function is running
+          ✅ Task 3: minio-event-bridge is running
+          {{ '✅' if _task4_ok else '⚠️' }} Task 4: {{ 'User bucket ' + user + '-pdf-inbox exists' if _task4_ok else 'User bucket not found or empty (upload a PDF to trigger the flow)' }}
+        error_msg: |
+          {{ '✅' if _task1_ok else '❌' }} Task 1: {{ 'Knative trigger Ready' if _task1_ok else 'minio-pdf-event-trigger not Ready — check oc get trigger -n ' + event_ns }}
+          {{ '✅' if _task2_ok else '❌' }} Task 2: {{ 'kfp-s3-trigger running' if _task2_ok else 'kfp-s3-trigger pod not found — check Knative service in ' + event_ns }}
+          {{ '✅' if _task3_ok else '❌' }} Task 3: {{ 'minio-event-bridge running' if _task3_ok else 'minio-event-bridge not ready in ' + event_ns }}
+          {{ '✅' if _task4_ok else '⚠️' }} Task 4: {{ 'User bucket exists' if _task4_ok else 'User bucket ' + user + '-pdf-inbox not found' }}

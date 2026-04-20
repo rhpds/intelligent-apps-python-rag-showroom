@@ -1,0 +1,71 @@
+---
+# VALIDATE — 2.6 Creating a Pipeline Run + 2.7 Monitoring
+# Task 1: At least one pipeline run exists
+# Task 2: At least one pipeline run has SUCCEEDED
+# Task 3: Milvus collection has been populated (optional functional test)
+
+- name: Module 02-06 Validation — Pipeline Run Completed
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    ns: "{{ user }}"
+  tasks:
+
+    # ── Get SA token ───────────────────────────────────────────────────────────
+    - name: Create SA token for pipeline access
+      ansible.builtin.shell: >-
+        oc --kubeconfig={{ k8s_kubeconfig }}
+        create token pipeline -n {{ ns }}
+      register: r_token
+      ignore_errors: true
+
+    # ── Check 1: Pipeline runs exist ───────────────────────────────────────────
+    - name: List pipeline runs via KFP API
+      ansible.builtin.shell: >-
+        oc --kubeconfig={{ k8s_kubeconfig }}
+        exec deploy/ds-pipeline-dspa -n {{ ns }}
+        -c ds-pipeline-api-server --
+        curl -sk -H "Authorization: Bearer {{ r_token.stdout }}"
+        "https://localhost:8443/apis/v2beta1/runs?page_size=10"
+      register: r_runs
+      ignore_errors: true
+
+    # ── Check 2: Milvus has data (functional test) ─────────────────────────────
+    - name: Check Milvus collection via exec into milvus pod
+      ansible.builtin.shell: >-
+        oc --kubeconfig={{ k8s_kubeconfig }}
+        exec deploy/vectordb-milvus-standalone -n {{ ns }}
+        -- curl -s http://localhost:9091/healthz
+      register: r_milvus_health
+      ignore_errors: true
+
+    # ── Build results ──────────────────────────────────────────────────────────
+    - name: Build task results
+      ansible.builtin.set_fact:
+        _runs_data: "{{ r_runs.stdout | default('{}') | from_json }}"
+
+    - name: Evaluate results
+      ansible.builtin.set_fact:
+        _task1_ok: >-
+          {{ (_runs_data.runs | default([]) | length) > 0 }}
+        _task2_ok: >-
+          {{ _runs_data.runs | default([]) |
+             selectattr('state', 'defined') |
+             selectattr('state', 'equalto', 'SUCCEEDED') |
+             list | length > 0 }}
+        _task3_ok: >-
+          {{ r_milvus_health.rc | default(1) == 0 }}
+
+    # ── Validate ───────────────────────────────────────────────────────────────
+    - name: Validate all tasks
+      validation_check:
+        check: "{{ _task1_ok and _task2_ok }}"
+        pass_msg: |
+          ✅ Task 1: Pipeline run(s) exist in DSPA
+          ✅ Task 2: At least one pipeline run has SUCCEEDED
+          {{ '✅' if _task3_ok else '⚠️' }} Test: Milvus health check {{ 'OK' if _task3_ok else '— could not reach Milvus health endpoint (non-critical)' }}
+        error_msg: |
+          {{ '✅' if _task1_ok else '❌' }} Task 1: {{ 'Pipeline runs exist' if _task1_ok else 'No pipeline runs found — create a run from the pipeline details page with api_endpoint, milvus_host, milvus_port, and collection_name parameters' }}
+          {{ '✅' if _task2_ok else '❌' }} Task 2: {{ 'Run succeeded' if _task2_ok else 'No successful pipeline run — check the run graph for errors, verify parameters match your service endpoints' }}
+          {{ '✅' if _task3_ok else '⚠️' }} Test: Milvus health {{ 'OK' if _task3_ok else '— non-critical' }}
