@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-LlamaStack Responses API integration
-Functions for using LlamaStack's modern Responses API with MCP tools and RAG
+OGX Responses API integration
+Functions for using OGX's Responses API with MCP tools and RAG
 """
 import asyncio
 import json
@@ -24,7 +24,7 @@ async def stream_response(
     """Create a streaming response using the Responses API
 
     Args:
-        client: LlamaStackClient instance
+        client: OgxClient instance
         model: LLM model to use (e.g., "openai/gpt-4o")
         user_message: User's message/input
         instructions: System instructions/prompt
@@ -40,7 +40,8 @@ async def stream_response(
             "model": model,
             "input": user_message,
             "instructions": instructions,
-            "stream": True
+            "stream": True,
+            "reasoning": {"effort": "low"},
         }
 
         # Add tools if provided
@@ -52,16 +53,32 @@ async def stream_response(
         if previous_response_id:
             request_params["previous_response_id"] = previous_response_id
 
-        # Create the streaming response
         logger.info(f"Creating Responses API request with model: {model}")
         if previous_response_id:
             logger.info(f"Using previous_response_id for conversation continuity: {previous_response_id}")
+
         response = client.responses.create(**request_params)
 
-        # Stream the response
+        # Stream the response. If the provider rejects reasoning_effort,
+        # the error arrives as a response.failed event — retry without it.
         for event in response:
+            event_type = getattr(event, 'type', None)
+            if event_type == 'response.failed' and "reasoning" in request_params:
+                error_msg = ""
+                response_obj = getattr(event, 'response', None)
+                if response_obj:
+                    error_info = getattr(response_obj, 'error', None)
+                    if error_info:
+                        error_msg = getattr(error_info, 'message', '')
+                if "reasoning_effort" in error_msg:
+                    logger.warning("Provider rejected reasoning_effort, retrying without it")
+                    del request_params["reasoning"]
+                    response = client.responses.create(**request_params)
+                    for retry_event in response:
+                        yield retry_event
+                        await asyncio.sleep(0)
+                    return
             yield event
-            # Force event loop to yield and flush
             await asyncio.sleep(0)
 
     except Exception as e:
@@ -72,13 +89,13 @@ async def stream_response(
 
 
 def fetch_file_attributes(client, vector_store_id: str, file_id: str) -> Optional[Dict]:
-    """Fetch file attributes from LlamaStack API
+    """Fetch file attributes from OGX API
 
     This is a workaround for a bug where attributes aren't returned in file_search
     results from the Responses API.
 
     Args:
-        client: LlamaStackClient instance
+        client: OgxClient instance
         vector_store_id: Vector store ID
         file_id: File ID
 
@@ -117,7 +134,7 @@ def format_response_event_for_sse(chunk, client=None, vector_store_id: Optional[
 
     Args:
         chunk: Event from Responses API
-        client: LlamaStackClient instance (optional, for fetching file attributes)
+        client: OgxClient instance (optional, for fetching file attributes)
         vector_store_id: Vector store ID (optional, for fetching file attributes)
     """
     try:
