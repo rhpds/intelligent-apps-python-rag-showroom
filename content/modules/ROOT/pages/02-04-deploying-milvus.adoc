@@ -23,18 +23,18 @@ image::03/openshift-web-terminal.png[The Import YAML button in the OpenShift web
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: '{user}-milvus' <1>
+  name: '{user}-milvus'  # <1>
   namespace: openshift-gitops
 spec:
   project: default
   source:
     repoURL: 'https://github.com/cnuland/hello-chris-rag-pipeline.git'
-    path: services/milvus <2>
+    path: services/milvus  # <2>
     targetRevision: main
     kustomize: {}
   destination:
     server: https://kubernetes.default.svc
-    namespace: '{user}' <3>
+    namespace: '{user}'  # <3>
   syncPolicy:
     automated:
       prune: true

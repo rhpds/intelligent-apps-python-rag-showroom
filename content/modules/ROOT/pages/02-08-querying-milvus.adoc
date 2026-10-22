@@ -62,7 +62,7 @@ You will need to paste your API token into the `openai_api_key` variable, replac
 
 [source,python,subs=attributes+]
 ----
-inference_server_url = "https://litellm-prod.apps.maas.redhatworkshops.io"
+inference_server_url = "https://maas-rhdp.apps.maas.redhatworkshops.io"
 
 llm = VLLMOpenAI(
     openai_api_key="{litellm_virtual_key}",  # <-- Paste your key here

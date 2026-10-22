@@ -33,18 +33,18 @@ image::03/openshift-web-terminal.png[The Import YAML button in the OpenShift web
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: '{user}-mock-api' <1>
+  name: '{user}-mock-api'  # <1>
   namespace: openshift-gitops
 spec:
   project: default
   source:
     repoURL: 'https://github.com/cnuland/hello-chris-rag-pipeline.git'
-    path: apps/api/.k8s <2>
+    path: apps/api/.k8s  # <2>
     targetRevision: main
     kustomize: {}
   destination:
     server: https://kubernetes.default.svc
-    namespace: '{user}' <3>
+    namespace: '{user}'  # <3>
   syncPolicy:
     automated:
       prune: true

@@ -36,7 +36,7 @@ llm:
 
   # vLLM-specific configuration (only used when vllm is in engines list)
   vllm:
-    endpoint: "https://litellm-prod.apps.maas.redhatworkshops.io/v1"
+    endpoint: "https://maas-rhdp.apps.maas.redhatworkshops.io/v1"
 
 # Agent Configurations
 # Define different specialized agents with their system prompts and available toolgroups

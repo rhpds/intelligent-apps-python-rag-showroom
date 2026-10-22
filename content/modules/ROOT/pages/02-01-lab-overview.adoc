@@ -138,13 +138,13 @@ The key cells perform the following actions:
 [source,python,subs=attributes+]
 ----
 # LLM Inference Server URL
-inference_server_url = "https://litellm-prod.apps.maas.redhatworkshops.io" <1>
+inference_server_url = "https://maas-rhdp.apps.maas.redhatworkshops.io"  # <1>
 
 # LLM definition using a client that speaks the OpenAI API format
 llm = VLLMOpenAI(
-    openai_api_key="{litellm_virtual_key}", <2>
-    openai_api_base=f"{inference_server_url}/v1", <3>
-    model_name="granite-4.0-h-tiny", <4>
+    openai_api_key="{litellm_virtual_key}",  # <2>
+    openai_api_base=f"{inference_server_url}/v1",  # <3>
+    model_name="granite-4.0-h-tiny",  # <4>
     # ... other parameters
 )
 ----
@@ -158,18 +158,17 @@ llm = VLLMOpenAI(
 [source,python]
 ----
 template="""<|system|>
-You are a helpful, respectful and honest assistant. <1>
+You are a helpful, respectful and honest assistant.
 <|user|>
 ### QUESTION:
-{input} <2>
+{input}
 ### ANSWER:
 <|assistant|>
 """
-prompt = PromptTemplate(input_variables=["input"], template=template) <3>
+prompt = PromptTemplate(input_variables=["input"], template=template)  # <1>
 ----
-<1> System message defining the assistant's behavior
-<2> Placeholder for user input that will be dynamically replaced
-<3> LangChain PromptTemplate object for structured prompt formatting
+<1> LangChain `PromptTemplate` object for structured prompt formatting.
+The `<|system|>` line is the system message defining the assistant's behavior, and `{input}` is the placeholder for user input that will be dynamically replaced.
 
 .. *Ask a Question:* The final cell defines a question and sends it to the LLM. You should see the answer streamed back directly in the notebook output.
 +
