@@ -138,20 +138,16 @@ The key cells perform the following actions:
 [source,python,subs=attributes+]
 ----
 # LLM Inference Server URL
-inference_server_url = "https://maas-rhdp.apps.maas.redhatworkshops.io"  # <1>
+inference_server_url = "https://maas-rhdp.apps.maas.redhatworkshops.io"
 
 # LLM definition using a client that speaks the OpenAI API format
 llm = VLLMOpenAI(
-    openai_api_key="{litellm_virtual_key}",  # <2>
-    openai_api_base=f"{inference_server_url}/v1",  # <3>
-    model_name="granite-4.0-h-tiny",  # <4>
+    openai_api_key="{litellm_virtual_key}",  # your personal API token
+    openai_api_base=f"{inference_server_url}/v1",  # OpenAI-compatible endpoint
+    model_name="granite-4.0-h-tiny",  # the Granite model to use
     # ... other parameters
 )
 ----
-<1> Internal Kubernetes service URL for the LLM inference server
-<2> Your personal API token (`{litellm_virtual_key}`) injected at runtime
-<3> OpenAI-compatible API endpoint format
-<4> Specific model identifier for the deployed Granite model
 
 .. *Define the Prompt:* This cell creates a prompt template that instructs the LLM how to behave and formats the user's question.
 +
@@ -165,9 +161,10 @@ You are a helpful, respectful and honest assistant.
 ### ANSWER:
 <|assistant|>
 """
-prompt = PromptTemplate(input_variables=["input"], template=template)  # <1>
+# LangChain PromptTemplate for structured prompt formatting
+prompt = PromptTemplate(input_variables=["input"], template=template)
 ----
-<1> LangChain `PromptTemplate` object for structured prompt formatting.
++
 The `<|system|>` line is the system message defining the assistant's behavior, and `{input}` is the placeholder for user input that will be dynamically replaced.
 
 .. *Ask a Question:* The final cell defines a question and sends it to the LLM. You should see the answer streamed back directly in the notebook output.
