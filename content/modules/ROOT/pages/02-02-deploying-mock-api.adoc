@@ -33,18 +33,21 @@ image::03/openshift-web-terminal.png[The Import YAML button in the OpenShift web
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: '{user}-mock-api'  # <1>
+  # Unique name scoped to your account, avoiding conflicts on the shared cluster
+  name: '{user}-mock-api'
   namespace: openshift-gitops
 spec:
   project: default
   source:
     repoURL: 'https://github.com/cnuland/hello-chris-rag-pipeline.git'
-    path: apps/api/.k8s  # <2>
+    # Kustomize directory that defines the mock API deployment
+    path: apps/api/.k8s
     targetRevision: main
     kustomize: {}
   destination:
     server: https://kubernetes.default.svc
-    namespace: '{user}'  # <3>
+    # Your namespace, where ArgoCD deploys the application workloads
+    namespace: '{user}'
   syncPolicy:
     automated:
       prune: true
@@ -53,9 +56,6 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true
 ----
-<1> A unique name scoped to your account, preventing resource conflicts in the shared cluster.
-<2> The Kustomize overlay directory within the repository that defines the mock API deployment.
-<3> The target namespace where ArgoCD will deploy the application workloads.
 +
 [.bordershadow]
 image::03/import-yaml-editor.png[The OpenShift Import YAML editor with the ArgoCD Application manifest pasted in]

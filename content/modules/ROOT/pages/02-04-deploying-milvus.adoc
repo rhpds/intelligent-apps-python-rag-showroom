@@ -23,18 +23,21 @@ image::03/openshift-web-terminal.png[The Import YAML button in the OpenShift web
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: '{user}-milvus'  # <1>
+  # Unique name scoped to your account, avoiding conflicts on the shared cluster
+  name: '{user}-milvus'
   namespace: openshift-gitops
 spec:
   project: default
   source:
     repoURL: 'https://github.com/cnuland/hello-chris-rag-pipeline.git'
-    path: services/milvus  # <2>
+    # Kustomize directory that defines Milvus and its etcd dependency
+    path: services/milvus
     targetRevision: main
     kustomize: {}
   destination:
     server: https://kubernetes.default.svc
-    namespace: '{user}'  # <3>
+    # Your namespace, where ArgoCD deploys the Milvus workloads
+    namespace: '{user}'
   syncPolicy:
     automated:
       prune: true
@@ -43,9 +46,6 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true
 ----
-<1> A unique name scoped to your account, preventing resource conflicts in the shared cluster.
-<2> The Kustomize overlay directory within the repository that defines the Milvus deployment and its etcd dependency.
-<3> The target namespace where ArgoCD will deploy the Milvus workloads.
 
 . Click *Create*.
 +
