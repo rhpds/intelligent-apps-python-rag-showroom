@@ -98,12 +98,15 @@ Refresh the page after 30 seconds.
 
 With the mock API running, you are ready to move on to the next step.
 
+////
+Solve/Validate buttons disabled: not working yet. Remove this comment block to re-enable.
 ++++
 <div class="solve-button-placeholder" data-module="module-02-02"></div>
 ++++
 ++++
 <div class="validate-button-placeholder" data-module="module-02-02"></div>
 ++++
+////
 
 == Summary
 
