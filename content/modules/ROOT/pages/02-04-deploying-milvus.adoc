@@ -84,12 +84,15 @@ Refresh the page after 30 seconds.
 
 With Milvus running, we now have our data source (the API) and our data destination (the vector database) ready. The next step is to import the pipeline that connects them.
 
+////
+Solve/Validate buttons disabled: not working yet. Remove this comment block to re-enable.
 ++++
 <div class="solve-button-placeholder" data-module="module-02-04"></div>
 ++++
 ++++
 <div class="validate-button-placeholder" data-module="module-02-04"></div>
 ++++
+////
 
 == Summary
 

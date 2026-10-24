@@ -175,12 +175,15 @@ When your pipeline runs, it will retrieve all five records for embedding and ing
 With both endpoints confirmed, the mock API is fully operational.
 You are now ready to deploy the Milvus vector database.
 
+////
+Solve/Validate buttons disabled: not working yet. Remove this comment block to re-enable.
 ++++
 <div class="solve-button-placeholder" data-module="module-02-03"></div>
 ++++
 ++++
 <div class="validate-button-placeholder" data-module="module-02-03"></div>
 ++++
+////
 
 == Summary
 
