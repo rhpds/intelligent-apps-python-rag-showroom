@@ -42,7 +42,8 @@ spec:
     repoURL: 'https://github.com/cnuland/hello-chris-rag-pipeline.git'
     # Kustomize directory that defines the mock API deployment
     path: apps/api/.k8s
-    targetRevision: main
+    # Pinned commit of the lab repository
+    targetRevision: 4427cc17c90578330378deb15ea939c4582d9964
     kustomize: {}
   destination:
     server: https://kubernetes.default.svc

@@ -28,7 +28,7 @@
             source:
               repoURL: 'https://github.com/cnuland/hello-chris-rag-pipeline.git'
               path: services/milvus
-              targetRevision: main
+              targetRevision: 4427cc17c90578330378deb15ea939c4582d9964
               kustomize: {}
             destination:
               server: https://kubernetes.default.svc
